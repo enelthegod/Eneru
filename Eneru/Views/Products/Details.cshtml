@@ -1,0 +1,30 @@
+﻿@model Eneru.Models.Product
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div style="padding:1rem;">
+    <a href="/Products">← Back to catalog</a>
+
+    <div style="display:flex; gap:2rem; margin-top:1rem;">
+
+        <!-- Product image -->
+        <div style="flex:1;">
+            <img src="@Model.ImageUrl"
+                 alt="@Model.Name"
+                 style="width:100%; background:#f0f0f0;" />
+        </div>
+
+        <!-- Product info -->
+        <div style="flex:1;">
+            <p style="color:gray;">@Model.Brand</p>
+            <h1>@Model.Name</h1>
+            <p>@Model.Category?.Name</p>
+            <h2>$@Model.Price.ToString("0.00")</h2>
+            <p>@Model.Description</p>
+            <button>Add to Cart</button>
+        </div>
+
+    </div>
+</div>
