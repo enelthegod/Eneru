@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+
+<div style="max-width:400px; margin:2rem auto;">
+    <h2>Create Account</h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <p style="color:red;">@ViewBag.Error</p>
+    }
+
+    <form method="post" action="/Account/Register">
+        <div style="margin-bottom:1rem;">
+            <label>Name</label><br />
+            <input type="text" name="name" required style="width:100%;" />
+        </div>
+        <div style="margin-bottom:1rem;">
+            <label>Email</label><br />
+            <input type="email" name="email" required style="width:100%;" />
+        </div>
+        <div style="margin-bottom:1rem;">
+            <label>Password</label><br />
+            <input type="password" name="password" required style="width:100%;" />
+        </div>
+        <button type="submit">Register</button>
+    </form>
+
+    <p style="margin-top:1rem;">
+        Already have an account? <a href="/Account/Login">Login</a>
+    </p>
+</div>
