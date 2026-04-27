@@ -6,7 +6,6 @@
     <title>@ViewData["Title"] - Eneru</title>
 </head>
 <body>
-
     <nav style="display:flex; align-items:center; gap:2rem; padding:1rem 2rem; border-bottom:1px solid #ddd;">
         <a href="/" style="font-weight:bold; text-decoration:none; font-size:1.2rem;">Eneru</a>
         <a href="/Products">Catalog</a>
@@ -14,6 +13,7 @@
         <div style="margin-left:auto; display:flex; gap:1rem; align-items:center;">
             @if (Context.Session.GetInt32("UserId") != null)
             {
+                <a href="/Cart">Cart</a>
                 <span>@Context.Session.GetString("UserName")</span>
                 <form method="post" action="/Account/Logout" style="display:inline;">
                     <button type="submit">Logout</button>
@@ -34,6 +34,5 @@
     <footer style="text-align:center; padding:2rem; border-top:1px solid #ddd; margin-top:3rem; color:gray;">
         © 2026 - Eneru
     </footer>
-
 </body>
 </html>

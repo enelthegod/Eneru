@@ -23,7 +23,18 @@
             <p>@Model.Category?.Name</p>
             <h2>$@Model.Price.ToString("0.00")</h2>
             <p>@Model.Description</p>
-            <button>Add to Cart</button>
+            @if (Context.Session.GetInt32("UserId") != null)
+            {
+                <form method="post" action="/Cart/Add">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <input type="number" name="quantity" value="1" min="1" max="99" style="width:60px;" />
+                    <button type="submit">Add to Cart</button>
+                </form>
+            }
+            else
+            {
+                <a href="/Account/Login">Login to add to cart</a>
+            }
         </div>
 
     </div>

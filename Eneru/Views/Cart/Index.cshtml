@@ -1,0 +1,67 @@
+﻿@model List<Eneru.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<div style="max-width:800px; margin:2rem auto; padding:0 1rem;">
+    <h2>Your Cart</h2>
+
+    @if (!Model.Any())
+    {
+        <p>Your cart is empty. <a href="/Products">Continue shopping</a></p>
+    }
+    else
+    {
+        <!-- Cart items list -->
+        @foreach (var item in Model)
+        {
+            <div style="display:flex; align-items:center; gap:1rem; padding:1rem 0; border-bottom:1px solid #ddd;">
+
+                <!-- Product image -->
+                <img src="@item.Product!.ImageUrl"
+                     alt="@item.Product.Name"
+                     style="width:80px; height:80px; object-fit:cover; background:#f0f0f0;" />
+
+                <!-- Product info -->
+                <div style="flex:1;">
+                    <p style="margin:0; color:gray; font-size:0.9rem;">@item.Product.Brand</p>
+                    <p style="margin:0; font-weight:bold;">@item.Product.Name</p>
+                    <p style="margin:0;">$@item.Product.Price.ToString("0.00")</p>
+                </div>
+
+                <!-- Quantity control -->
+                <form method="post" action="/Cart/UpdateQuantity" style="display:flex; align-items:center; gap:0.5rem;">
+                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                    <input type="number"
+                           name="quantity"
+                           value="@item.Quantity"
+                           min="1"
+                           max="99"
+                           style="width:60px;" />
+                    <button type="submit">Update</button>
+                </form>
+
+                <!-- Item total price -->
+                <p style="min-width:80px; text-align:right;">
+                    $@((item.Product.Price * item.Quantity).ToString("0.00"))
+                </p>
+
+                <!-- Remove button -->
+                <form method="post" action="/Cart/Remove">
+                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                    <button type="submit">Remove</button>
+                </form>
+
+            </div>
+        }
+
+        <!-- Total and checkout -->
+        <div style="text-align:right; margin-top:1.5rem;">
+            <h3>Total: $@ViewBag.Total.ToString("0.00")</h3>
+            <a href="/Orders/Checkout">
+                <button style="padding:0.75rem 2rem; font-size:1rem;">Checkout →</button>
+            </a>
+        </div>
+    }
+</div>
