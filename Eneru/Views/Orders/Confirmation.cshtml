@@ -1,0 +1,35 @@
+﻿@model Eneru.Models.Order
+
+@{
+    ViewData["Title"] = "Order Confirmed";
+}
+
+<div style="max-width:600px; margin:2rem auto; padding:0 1rem; text-align:center;">
+
+    <h2>✓ Order Confirmed!</h2>
+    <p style="color:gray;">Order #@Model.Id · Placed on @Model.CreatedAt.ToString("MMMM dd, yyyy")</p>
+
+    <div style="text-align:left; margin-top:2rem;">
+        @foreach (var item in Model.OrderItems)
+        {
+            <div style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid #eee;">
+                <div>
+                    <p style="margin:0; font-weight:bold;">@item.Product!.Name</p>
+                    <p style="margin:0; color:gray; font-size:0.9rem;">Qty: @item.Quantity</p>
+                </div>
+                <p style="margin:0;">$@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))</p>
+            </div>
+        }
+    </div>
+
+    <h3 style="text-align:right; margin-top:1rem;">
+        Total: $@Model.TotalPrice.ToString("0.00")
+    </h3>
+
+    <div style="margin-top:2rem;">
+        <a href="/Orders/MyOrders">View My Orders</a>
+        &nbsp;&nbsp;
+        <a href="/Products">Continue Shopping</a>
+    </div>
+
+</div>

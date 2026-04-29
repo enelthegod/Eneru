@@ -1,0 +1,44 @@
+﻿@model List<Eneru.Models.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div style="max-width:700px; margin:2rem auto; padding:0 1rem;">
+    <h2>My Orders</h2>
+
+    @if (!Model.Any())
+    {
+        <p>No orders yet. <a href="/Products">Start shopping</a></p>
+    }
+    else
+    {
+        @foreach (var order in Model)
+        {
+            <div style="border:1px solid #ddd; padding:1rem; margin-bottom:1rem;">
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <p style="margin:0; font-weight:bold;">Order #@order.Id</p>
+                        <p style="margin:0; color:gray; font-size:0.9rem;">
+                            @order.CreatedAt.ToString("MMMM dd, yyyy") · @order.Status
+                        </p>
+                    </div>
+                    <p style="margin:0; font-weight:bold;">$@order.TotalPrice.ToString("0.00")</p>
+                </div>
+
+                <!-- List of products in this order -->
+                <div style="margin-top:0.75rem;">
+                    @foreach (var item in order.OrderItems)
+                    {
+                        <p style="margin:0.25rem 0; font-size:0.9rem; color:gray;">
+                            @item.Product!.Name × @item.Quantity —
+                            $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
+                        </p>
+                    }
+                </div>
+
+            </div>
+        }
+    }
+</div>

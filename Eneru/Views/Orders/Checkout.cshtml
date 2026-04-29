@@ -1,0 +1,31 @@
+﻿@model List<Eneru.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div style="max-width:600px; margin:2rem auto; padding:0 1rem;">
+    <h2>Order Summary</h2>
+
+    @foreach (var item in Model)
+    {
+        <div style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid #eee;">
+            <div>
+                <p style="margin:0; font-weight:bold;">@item.Product!.Name</p>
+                <p style="margin:0; color:gray; font-size:0.9rem;">@item.Product.Brand · Qty: @item.Quantity</p>
+            </div>
+            <p style="margin:0;">$@((item.Product.Price * item.Quantity).ToString("0.00"))</p>
+        </div>
+    }
+
+    <div style="text-align:right; margin-top:1rem;">
+        <h3>Total: $@ViewBag.Total.ToString("0.00")</h3>
+    </div>
+
+    <form method="post" action="/Orders/PlaceOrder" style="text-align:right; margin-top:1rem;">
+        <a href="/Cart" style="margin-right:1rem;">← Back to Cart</a>
+        <button type="submit" style="padding:0.75rem 2rem; font-size:1rem;">
+            Place Order
+        </button>
+    </form>
+</div>

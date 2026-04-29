@@ -14,6 +14,7 @@
             @if (Context.Session.GetInt32("UserId") != null)
             {
                 <a href="/Cart">Cart</a>
+                <a href="/Orders/MyOrders">My Orders</a>
                 <span>@Context.Session.GetString("UserName")</span>
                 <form method="post" action="/Account/Logout" style="display:inline;">
                     <button type="submit">Logout</button>
