@@ -13,6 +13,10 @@
         <div style="margin-left:auto; display:flex; gap:1rem; align-items:center;">
             @if (Context.Session.GetInt32("UserId") != null)
             {
+                @if (Context.Session.GetString("UserEmail") == "admin@eneru.com")
+                {
+                    <a href="/Admin">Admin</a>
+                }
                 <a href="/Cart">Cart</a>
                 <a href="/Orders/MyOrders">My Orders</a>
                 <span>@Context.Session.GetString("UserName")</span>

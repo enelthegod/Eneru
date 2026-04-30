@@ -1,0 +1,55 @@
+﻿@model Eneru.Models.Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<div style="max-width:500px; margin:2rem auto; padding:0 1rem;">
+    <h2>Edit Product</h2>
+
+    <form method="post" action="/Admin/EditProduct">
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div style="margin-bottom:1rem;">
+            <label>Name</label><br />
+            <input type="text" name="name" value="@Model.Name" required style="width:100%;" />
+        </div>
+        <div style="margin-bottom:1rem;">
+            <label>Description</label><br />
+            <textarea name="description" rows="3" style="width:100%;">@Model.Description</textarea>
+        </div>
+        <div style="margin-bottom:1rem;">
+            <label>Price</label><br />
+            <input type="number" name="price" step="0.01"
+                   value="@Model.Price" required style="width:100%;" />
+        </div>
+        <div style="margin-bottom:1rem;">
+            <label>Brand</label><br />
+            <input type="text" name="brand" value="@Model.Brand" required style="width:100%;" />
+        </div>
+        <div style="margin-bottom:1rem;">
+            <label>Category</label><br />
+            <select name="categoryId" style="width:100%;">
+                @foreach (var cat in ViewBag.Categories as List<Eneru.Models.Category>)
+                {
+                    <option value="@cat.Id" @(cat.Id == Model.CategoryId ? "selected" : "")>
+                        @cat.Name
+                    </option>
+                }
+            </select>
+        </div>
+        <div style="margin-bottom:1rem;">
+            <label>Image URL</label><br />
+            <input type="text" name="imageUrl" value="@Model.ImageUrl" style="width:100%;" />
+        </div>
+        <div style="margin-bottom:1rem;">
+            <label>
+                <input type="checkbox" name="isAvailable" value="true"
+                       @(Model.IsAvailable ? "checked" : "") />
+                Available for sale
+            </label>
+        </div>
+        <button type="submit">Save Changes</button>
+        <a href="/Admin/Products" style="margin-left:1rem;">Cancel</a>
+    </form>
+</div>

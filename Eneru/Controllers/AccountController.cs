@@ -41,9 +41,9 @@ namespace Eneru.Controllers
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
 
-            // Save user id and name in session after registration
             HttpContext.Session.SetInt32("UserId", user.Id);
             HttpContext.Session.SetString("UserName", user.Name);
+            HttpContext.Session.SetString("UserEmail", user.Email);
 
             return RedirectToAction("Index", "Products");
         }
@@ -55,18 +55,26 @@ namespace Eneru.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+            // Check static admin credentials first — no database lookup needed
+            if (email == AdminGuard.AdminEmail && password == AdminGuard.AdminPassword)
+            {
+                HttpContext.Session.SetString("UserEmail", email);
+                HttpContext.Session.SetString("UserName", "Admin");
+                HttpContext.Session.SetInt32("UserId", 0);
+                return RedirectToAction("Index", "Admin");
+            }
 
-            // Verify user exists and password matches
+            // Regular user login
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null || !PasswordHasher.Verify(password, user.PasswordHash))
             {
                 ViewBag.Error = "Invalid email or password.";
                 return View();
             }
 
-            // Save user info in session
             HttpContext.Session.SetInt32("UserId", user.Id);
             HttpContext.Session.SetString("UserName", user.Name);
+            HttpContext.Session.SetString("UserEmail", user.Email);
 
             return RedirectToAction("Index", "Products");
         }
@@ -75,7 +83,6 @@ namespace Eneru.Controllers
         [HttpPost]
         public IActionResult Logout()
         {
-            // Clear all session data
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }

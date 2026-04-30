@@ -1,0 +1,60 @@
+﻿@model List<Eneru.Models.Order>
+
+@{
+    ViewData["Title"] = "Manage Orders";
+}
+
+<div style="max-width:900px; margin:2rem auto; padding:0 1rem;">
+    <h2>All Orders</h2>
+
+    @if (!Model.Any())
+    {
+        <p>No orders yet.</p>
+    }
+    else
+    {
+        @foreach (var order in Model)
+        {
+            <div style="border:1px solid #ddd; padding:1rem; margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <p style="margin:0; font-weight:bold;">
+                            Order #@order.Id — @order.User?.Name
+                        </p>
+                        <p style="margin:0; color:gray; font-size:0.9rem;">
+                            @order.CreatedAt.ToString("MMMM dd, yyyy")
+                        </p>
+                    </div>
+
+                    <form method="post" action="/Admin/UpdateOrderStatus"
+                          style="display:flex; align-items:center; gap:0.5rem;">
+                        <input type="hidden" name="orderId" value="@order.Id" />
+                        <select name="status">
+                            @foreach (var status in Enum.GetValues<Eneru.Models.OrderStatus>())
+                            {
+                                <option value="@status"
+                                        @(status == order.Status ? "selected" : "")>
+                                    @status
+                                </option>
+                            }
+                        </select>
+                        <button type="submit">Update</button>
+                    </form>
+                </div>
+
+                <div style="margin-top:0.75rem;">
+                    @foreach (var item in order.OrderItems)
+                    {
+                        <p style="margin:0.25rem 0; font-size:0.9rem; color:gray;">
+                            @item.Product?.Name × @item.Quantity —
+                            $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
+                        </p>
+                    }
+                    <p style="margin:0.5rem 0 0; font-weight:bold;">
+                        Total: $@order.TotalPrice.ToString("0.00")
+                    </p>
+                </div>
+            </div>
+        }
+    }
+</div>
