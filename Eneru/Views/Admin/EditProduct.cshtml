@@ -32,7 +32,7 @@
             <select name="categoryId" style="width:100%;">
                 @foreach (var cat in ViewBag.Categories as List<Eneru.Models.Category>)
                 {
-                    <option value="@cat.Id" @(cat.Id == Model.CategoryId ? "selected" : "")>
+                    <option value="@cat.Id" selected="@(cat.Id == Model.CategoryId)">
                         @cat.Name
                     </option>
                 }

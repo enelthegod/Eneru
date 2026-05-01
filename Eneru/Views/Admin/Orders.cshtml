@@ -32,8 +32,7 @@
                         <select name="status">
                             @foreach (var status in Enum.GetValues<Eneru.Models.OrderStatus>())
                             {
-                                <option value="@status"
-                                        @(status == order.Status ? "selected" : "")>
+                                <option value="@status" selected="@(status == order.Status)">
                                     @status
                                 </option>
                             }

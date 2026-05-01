@@ -14,21 +14,28 @@ namespace Eneru.Controllers
             _db = db;
         }
 
+        // Recalculate total cart item count and save it in session
+        private async Task RefreshCartCount(int userId)
+        {
+            var count = await _db.CartItems
+                .Where(c => c.UserId == userId)
+                .SumAsync(c => c.Quantity);
+
+            HttpContext.Session.SetInt32("CartCount", count);
+        }
+
         // GET /Cart
         public async Task<IActionResult> Index()
         {
-            // Redirect to login if not authenticated
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            // Get all cart items for this user, including product details
             var items = await _db.CartItems
                 .Include(c => c.Product)
                 .Where(c => c.UserId == userId)
                 .ToListAsync();
 
-            // Calculate total price
             ViewBag.Total = items.Sum(c => c.Product!.Price * c.Quantity);
 
             return View(items);
@@ -42,18 +49,15 @@ namespace Eneru.Controllers
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            // Check if this product is already in the cart
             var existing = await _db.CartItems
                 .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
 
             if (existing != null)
             {
-                // If already in cart — just increase quantity
                 existing.Quantity += quantity;
             }
             else
             {
-                // Otherwise add new cart item
                 _db.CartItems.Add(new CartItem
                 {
                     UserId = userId.Value,
@@ -63,6 +67,7 @@ namespace Eneru.Controllers
             }
 
             await _db.SaveChangesAsync();
+            await RefreshCartCount(userId.Value);
             return RedirectToAction("Index");
         }
 
@@ -81,6 +86,7 @@ namespace Eneru.Controllers
             {
                 _db.CartItems.Remove(item);
                 await _db.SaveChangesAsync();
+                await RefreshCartCount(userId.Value);
             }
 
             return RedirectToAction("Index");
@@ -99,13 +105,13 @@ namespace Eneru.Controllers
 
             if (item != null)
             {
-                // If quantity is 0 or less — remove item completely
                 if (quantity <= 0)
                     _db.CartItems.Remove(item);
                 else
                     item.Quantity = quantity;
 
                 await _db.SaveChangesAsync();
+                await RefreshCartCount(userId.Value);
             }
 
             return RedirectToAction("Index");

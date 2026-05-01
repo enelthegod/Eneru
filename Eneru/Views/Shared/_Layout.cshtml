@@ -17,7 +17,12 @@
                 {
                     <a href="/Admin">Admin</a>
                 }
-                <a href="/Cart">Cart</a>
+                    var cartCount = Context.Session.GetInt32("CartCount") ?? 0;
+          
+
+                <a href="/Cart">
+                    Cart @(cartCount > 0 ? $"({cartCount})" : "")
+                </a>
                 <a href="/Orders/MyOrders">My Orders</a>
                 <span>@Context.Session.GetString("UserName")</span>
                 <form method="post" action="/Account/Logout" style="display:inline;">

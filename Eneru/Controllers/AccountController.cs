@@ -45,6 +45,9 @@ namespace Eneru.Controllers
             HttpContext.Session.SetString("UserName", user.Name);
             HttpContext.Session.SetString("UserEmail", user.Email);
 
+            // New users have empty cart so set counter to 0
+            HttpContext.Session.SetInt32("CartCount", 0);
+
             return RedirectToAction("Index", "Products");
         }
 
@@ -61,6 +64,7 @@ namespace Eneru.Controllers
                 HttpContext.Session.SetString("UserEmail", email);
                 HttpContext.Session.SetString("UserName", "Admin");
                 HttpContext.Session.SetInt32("UserId", 0);
+                HttpContext.Session.SetInt32("CartCount", 0);
                 return RedirectToAction("Index", "Admin");
             }
 
@@ -76,6 +80,12 @@ namespace Eneru.Controllers
             HttpContext.Session.SetString("UserName", user.Name);
             HttpContext.Session.SetString("UserEmail", user.Email);
 
+            // Load existing cart count from database on login
+            var cartCount = await _db.CartItems
+                .Where(c => c.UserId == user.Id)
+                .SumAsync(c => c.Quantity);
+            HttpContext.Session.SetInt32("CartCount", cartCount);
+
             return RedirectToAction("Index", "Products");
         }
 
@@ -83,6 +93,7 @@ namespace Eneru.Controllers
         [HttpPost]
         public IActionResult Logout()
         {
+            // Clear all session data including cart count
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
