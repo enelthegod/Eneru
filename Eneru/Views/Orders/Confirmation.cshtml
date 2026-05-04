@@ -4,32 +4,58 @@
     ViewData["Title"] = "Order Confirmed";
 }
 
-<div style="max-width:600px; margin:2rem auto; padding:0 1rem; text-align:center;">
+<div class="container" style="max-width:600px;">
 
-    <h2>✓ Order Confirmed!</h2>
-    <p style="color:gray;">Order #@Model.Id · Placed on @Model.CreatedAt.ToString("MMMM dd, yyyy")</p>
+    <!-- Success header -->
+    <div class="text-center mb-5">
+        <div class="mb-3">
+            <i class="bi bi-check-circle"
+               style="font-size:3rem; color:#111;"></i>
+        </div>
+        <h4 class="fw-bold text-uppercase mb-1" style="letter-spacing:2px;">
+            Order Confirmed
+        </h4>
+        <p class="text-muted">
+            Order #@Model.Id ·
+            @Model.CreatedAt.ToString("MMMM dd, yyyy")
+        </p>
+    </div>
 
-    <div style="text-align:left; margin-top:2rem;">
-        @foreach (var item in Model.OrderItems)
-        {
-            <div style="display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid #eee;">
-                <div>
-                    <p style="margin:0; font-weight:bold;">@item.Product!.Name</p>
-                    <p style="margin:0; color:gray; font-size:0.9rem;">Qty: @item.Quantity</p>
+    <!-- Order items -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-0">
+            @foreach (var item in Model.OrderItems)
+            {
+                <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                    <div>
+                        <p class="fw-bold mb-0">@item.Product!.Name</p>
+                        <p class="text-muted mb-0" style="font-size:0.85rem;">
+                            Qty: @item.Quantity
+                        </p>
+                    </div>
+                    <p class="fw-bold mb-0">
+                        $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
+                    </p>
                 </div>
-                <p style="margin:0;">$@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))</p>
+            }
+            <div class="p-3 d-flex justify-content-between">
+                <span class="fw-bold text-uppercase"
+                      style="letter-spacing:1px;">Total</span>
+                <span class="fw-bold fs-5">
+                    $@Model.TotalPrice.ToString("0.00")
+                </span>
             </div>
-        }
+        </div>
     </div>
 
-    <h3 style="text-align:right; margin-top:1rem;">
-        Total: $@Model.TotalPrice.ToString("0.00")
-    </h3>
-
-    <div style="margin-top:2rem;">
-        <a href="/Orders/MyOrders">View My Orders</a>
-        &nbsp;&nbsp;
-        <a href="/Products">Continue Shopping</a>
+    <div class="d-flex gap-3 justify-content-center">
+        <a href="/Orders/MyOrders" class="btn btn-dark"
+               style="text-transform:uppercase; letter-spacing:1px;">
+            My Orders
+        </a>
+        <a href="/Products" class="btn btn-outline-dark"
+               style="text-transform:uppercase; letter-spacing:1px;">
+            Continue Shopping
+        </a>
     </div>
-
 </div>

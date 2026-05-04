@@ -4,40 +4,52 @@
     ViewData["Title"] = "My Orders";
 }
 
-<div style="max-width:700px; margin:2rem auto; padding:0 1rem;">
-    <h2>My Orders</h2>
+<div class="container" style="max-width:750px;">
+    <h4 class="fw-bold text-uppercase mb-4" style="letter-spacing:1px;">My Orders</h4>
 
     @if (!Model.Any())
     {
-        <p>No orders yet. <a href="/Products">Start shopping</a></p>
+        <div class="text-center py-5">
+            <i class="bi bi-clock-history" style="font-size:3rem; color:#ccc;"></i>
+            <p class="text-muted mt-3">No orders yet.</p>
+            <a href="/Products" class="btn btn-dark">Start Shopping</a>
+        </div>
     }
     else
     {
         @foreach (var order in Model)
         {
-            <div style="border:1px solid #ddd; padding:1rem; margin-bottom:1rem;">
-
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <p style="margin:0; font-weight:bold;">Order #@order.Id</p>
-                        <p style="margin:0; color:gray; font-size:0.9rem;">
-                            @order.CreatedAt.ToString("MMMM dd, yyyy") · @order.Status
-                        </p>
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <p class="fw-bold mb-0">Order #@order.Id</p>
+                            <p class="text-muted mb-0" style="font-size:0.85rem;">
+                                @order.CreatedAt.ToString("MMMM dd, yyyy")
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-dark text-uppercase"
+                                  style="letter-spacing:1px; font-size:0.7rem;">
+                                @order.Status
+                            </span>
+                            <p class="fw-bold mb-0 mt-1">
+                                $@order.TotalPrice.ToString("0.00")
+                            </p>
+                        </div>
                     </div>
-                    <p style="margin:0; font-weight:bold;">$@order.TotalPrice.ToString("0.00")</p>
-                </div>
 
-                <!-- List of products in this order -->
-                <div style="margin-top:0.75rem;">
                     @foreach (var item in order.OrderItems)
                     {
-                        <p style="margin:0.25rem 0; font-size:0.9rem; color:gray;">
-                            @item.Product!.Name × @item.Quantity —
-                            $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
-                        </p>
+                        <div class="d-flex justify-content-between text-muted border-top pt-2 mt-2"
+                             style="font-size:0.85rem;">
+                            <span>@item.Product!.Name × @item.Quantity</span>
+                            <span>
+                                $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
+                            </span>
+                        </div>
                     }
                 </div>
-
             </div>
         }
     }
