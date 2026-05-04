@@ -2,31 +2,36 @@
     ViewData["Title"] = "Register";
 }
 
-<div style="max-width:400px; margin:2rem auto;">
-    <h2>Create Account</h2>
+<div class="container" style="max-width:420px;">
+    <h4 class="fw-bold mb-4 text-uppercase text-center" style="letter-spacing:2px;">
+        Create Account
+    </h4>
 
     @if (ViewBag.Error != null)
     {
-        <p style="color:red;">@ViewBag.Error</p>
+        <div class="alert alert-danger">@ViewBag.Error</div>
     }
 
     <form method="post" action="/Account/Register">
-        <div style="margin-bottom:1rem;">
-            <label>Name</label><br />
-            <input type="text" name="name" required style="width:100%;" />
+        <div class="mb-3">
+            <label class="form-label text-uppercase"
+                   style="font-size:0.75rem; letter-spacing:1px;">Name</label>
+            <input type="text" name="name" required class="form-control" />
         </div>
-        <div style="margin-bottom:1rem;">
-            <label>Email</label><br />
-            <input type="email" name="email" required style="width:100%;" />
+        <div class="mb-3">
+            <label class="form-label text-uppercase"
+                   style="font-size:0.75rem; letter-spacing:1px;">Email</label>
+            <input type="email" name="email" required class="form-control" />
         </div>
-        <div style="margin-bottom:1rem;">
-            <label>Password</label><br />
-            <input type="password" name="password" required style="width:100%;" />
+        <div class="mb-4">
+            <label class="form-label text-uppercase"
+                   style="font-size:0.75rem; letter-spacing:1px;">Password</label>
+            <input type="password" name="password" required class="form-control" />
         </div>
-        <button type="submit">Register</button>
+        <button type="submit" class="btn btn-dark w-100">Create Account</button>
     </form>
 
-    <p style="margin-top:1rem;">
-        Already have an account? <a href="/Account/Login">Login</a>
+    <p class="text-center text-muted mt-3" style="font-size:0.85rem;">
+        Already have an account? <a href="/Account/Login" class="text-dark">Login</a>
     </p>
 </div>

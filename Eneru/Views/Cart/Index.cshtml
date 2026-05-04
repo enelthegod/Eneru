@@ -4,64 +4,65 @@
     ViewData["Title"] = "Your Cart";
 }
 
-<div style="max-width:800px; margin:2rem auto; padding:0 1rem;">
-    <h2>Your Cart</h2>
+<div class="container" style="max-width:800px;">
+    <h4 class="fw-bold mb-4 text-uppercase" style="letter-spacing:1px;">Your Cart</h4>
 
     @if (!Model.Any())
     {
-        <p>Your cart is empty. <a href="/Products">Continue shopping</a></p>
+        <div class="text-center py-5">
+            <i class="bi bi-bag" style="font-size:3rem; color:#ccc;"></i>
+            <p class="text-muted mt-3">Your cart is empty.</p>
+            <a href="/Products" class="btn btn-dark">Continue Shopping</a>
+        </div>
     }
     else
     {
-        <!-- Cart items list -->
         @foreach (var item in Model)
         {
-            <div style="display:flex; align-items:center; gap:1rem; padding:1rem 0; border-bottom:1px solid #ddd;">
-
-                <!-- Product image -->
+            <div class="d-flex align-items-center gap-3 py-3 border-bottom">
                 <img src="@item.Product!.ImageUrl"
                      alt="@item.Product.Name"
-                     style="width:80px; height:80px; object-fit:cover; background:#f0f0f0;" />
+                     style="width:90px; height:90px; object-fit:cover; background:#f0f0f0;" />
 
-                <!-- Product info -->
-                <div style="flex:1;">
-                    <p style="margin:0; color:gray; font-size:0.9rem;">@item.Product.Brand</p>
-                    <p style="margin:0; font-weight:bold;">@item.Product.Name</p>
-                    <p style="margin:0;">$@item.Product.Price.ToString("0.00")</p>
+                <div class="flex-grow-1">
+                    <p class="text-muted mb-0" style="font-size:0.8rem;">@item.Product.Brand</p>
+                    <p class="fw-bold mb-0">@item.Product.Name</p>
+                    <p class="mb-0">$@item.Product.Price.ToString("0.00")</p>
                 </div>
 
-                <!-- Quantity control -->
-                <form method="post" action="/Cart/UpdateQuantity" style="display:flex; align-items:center; gap:0.5rem;">
+                <form method="post" action="/Cart/UpdateQuantity"
+                      class="d-flex align-items-center gap-2">
                     <input type="hidden" name="cartItemId" value="@item.Id" />
-                    <input type="number"
-                           name="quantity"
-                           value="@item.Quantity"
-                           min="1"
-                           max="99"
-                           style="width:60px;" />
-                    <button type="submit">Update</button>
+                    <input type="number" name="quantity" value="@item.Quantity"
+                           min="1" max="99"
+                           class="form-control form-control-sm"
+                           style="width:65px;" />
+                    <button type="submit" class="btn btn-outline-dark btn-sm">Update</button>
                 </form>
 
-                <!-- Item total price -->
-                <p style="min-width:80px; text-align:right;">
+                <p class="fw-bold mb-0" style="min-width:80px; text-align:right;">
                     $@((item.Product.Price * item.Quantity).ToString("0.00"))
                 </p>
 
-                <!-- Remove button -->
                 <form method="post" action="/Cart/Remove">
                     <input type="hidden" name="cartItemId" value="@item.Id" />
-                    <button type="submit">Remove</button>
+                    <button type="submit" class="btn btn-link text-danger p-0">
+                        <i class="bi bi-trash"></i>
+                    </button>
                 </form>
-
             </div>
         }
 
-        <!-- Total and checkout -->
-        <div style="text-align:right; margin-top:1.5rem;">
-            <h3>Total: $@ViewBag.Total.ToString("0.00")</h3>
-            <a href="/Orders/Checkout">
-                <button style="padding:0.75rem 2rem; font-size:1rem;">Checkout →</button>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <a href="/Products" class="text-muted text-decoration-none">
+                <i class="bi bi-arrow-left"></i> Continue Shopping
             </a>
+            <div class="text-end">
+                <h5 class="fw-bold">Total: $@ViewBag.Total.ToString("0.00")</h5>
+                <a href="/Orders/Checkout" class="btn btn-dark px-5">
+                    Checkout <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
         </div>
     }
 </div>
