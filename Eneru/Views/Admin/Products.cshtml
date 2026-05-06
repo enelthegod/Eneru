@@ -4,46 +4,146 @@
     ViewData["Title"] = "Manage Products";
 }
 
-<div style="max-width:900px; margin:2rem auto; padding:0 1rem;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-        <h2>Products</h2>
-        <a href="/Admin/CreateProduct"><button>+ Add Product</button></a>
-    </div>
+<div class="container-fluid">
+    <div class="row">
 
-    <table style="width:100%; border-collapse:collapse;">
-        <thead>
-            <tr style="border-bottom:2px solid #ddd; text-align:left;">
-                <th style="padding:0.5rem;">Name</th>
-                <th style="padding:0.5rem;">Brand</th>
-                <th style="padding:0.5rem;">Category</th>
-                <th style="padding:0.5rem;">Price</th>
-                <th style="padding:0.5rem;">Available</th>
-                <th style="padding:0.5rem;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model)
-            {
-                <tr style="border-bottom:1px solid #eee;">
-                    <td style="padding:0.5rem;">@product.Name</td>
-                    <td style="padding:0.5rem;">@product.Brand</td>
-                    <td style="padding:0.5rem;">@product.Category?.Name</td>
-                    <td style="padding:0.5rem;">$@product.Price.ToString("0.00")</td>
-                    <td style="padding:0.5rem;">@(product.IsAvailable ? "Yes" : "No")</td>
-                    <td style="padding:0.5rem; display:flex; gap:0.5rem;">
-                        <a href="/Admin/EditProduct/@product.Id">
-                            <button>Edit</button>
-                        </a>
-                        <form method="post" action="/Admin/DeleteProduct">
-                            <input type="hidden" name="id" value="@product.Id" />
-                            <button type="submit"
-                                    onclick="return confirm('Delete @product.Name?')">
-                                Delete
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        <!-- Sidebar -->
+        <div class="col-md-2 min-vh-100 py-4" style="background:#111; color:white;">
+            <p class="text-uppercase fw-bold mb-4 px-3"
+                   style="letter-spacing:2px; font-size:0.8rem; color:#aaa;">
+                Admin Panel
+            </p>
+            <ul class="list-unstyled px-3">
+                <li class="mb-2">
+                    <a href="/Admin"
+                           class="text-white text-decoration-none d-flex align-items-center gap-2">
+                        <i class="bi bi-grid"></i> Dashboard
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a href="/Admin/Products"
+                           class="fw-bold text-white text-decoration-none d-flex align-items-center gap-2">
+                        <i class="bi bi-box"></i> Products
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a href="/Admin/Orders"
+                           class="text-white text-decoration-none d-flex align-items-center gap-2">
+                        <i class="bi bi-receipt"></i> Orders
+                    </a>
+                </li>
+                <li class="mt-4">
+                    <form method="post" action="/Account/Logout">
+                        <button type="submit"
+                                class="btn btn-outline-light btn-sm w-100">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main content -->
+        <div class="col-md-10 py-4 px-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold text-uppercase mb-0" style="letter-spacing:1px;">
+                    Products
+                </h4>
+                <a href="/Admin/CreateProduct" class="btn btn-dark"
+                       style="text-transform:uppercase; letter-spacing:1px;">
+                    <i class="bi bi-plus"></i> Add Product
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <table class="table mb-0">
+                        <thead style="background:#f8f8f8;">
+                            <tr>
+                                <th class="py-3 px-4"
+                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
+                                    Product
+                                </th>
+                                <th class="py-3"
+                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
+                                    Brand
+                                </th>
+                                <th class="py-3"
+                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
+                                    Category
+                                </th>
+                                <th class="py-3"
+                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
+                                    Price
+                                </th>
+                                <th class="py-3"
+                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
+                                    Status
+                                </th>
+                                <th class="py-3"
+                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Model)
+                            {
+                                <tr class="border-top">
+                                    <td class="py-3 px-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <img src="@product.ImageUrl"
+                                                 alt="@product.Name"
+                                                 style="width:45px; height:45px; object-fit:cover; background:#f0f0f0;" />
+                                            <span class="fw-bold">@product.Name</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 text-muted">@product.Brand</td>
+                                    <td class="py-3 text-muted">@product.Category?.Name</td>
+                                    <td class="py-3 fw-bold">
+                                        $@product.Price.ToString("0.00")
+                                    </td>
+                                    <td class="py-3">
+                                        @if (product.IsAvailable)
+                                        {
+                                            <span class="badge"
+                                                  style="background:#e8f5e9; color:#2e7d32; font-size:0.75rem;">
+                                                Available
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge"
+                                                  style="background:#fce4ec; color:#c62828; font-size:0.75rem;">
+                                                Hidden
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="py-3">
+                                        <div class="d-flex gap-2">
+                                            <a href="/Admin/EditProduct/@product.Id"
+                                                   class="btn btn-sm btn-outline-dark"
+                                                   style="font-size:0.75rem;">
+                                                Edit
+                                            </a>
+                                            <form method="post" action="/Admin/DeleteProduct">
+                                                <input type="hidden" name="id"
+                                                       value="@product.Id" />
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        style="font-size:0.75rem;"
+                                                        onclick="return confirm('Delete @product.Name?')">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
