@@ -9,13 +9,18 @@ namespace Eneru.Controllers
     public class AdminController : Controller
     {
         private readonly AppDbContext _db;
+        private readonly ImageUploadService _imageUpload;
 
-        public AdminController(AppDbContext db)
+        // ASP.NET automatically injects both services here
+        public AdminController(AppDbContext db, ImageUploadService imageUpload)
         {
             _db = db;
+            _imageUpload = imageUpload;
         }
 
-        // GET /Admin
+        // ─────────────────────────────────────────
+        // DASHBOARD — GET /Admin
+        // ─────────────────────────────────────────
         public async Task<IActionResult> Index()
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
@@ -28,7 +33,9 @@ namespace Eneru.Controllers
             return View();
         }
 
-        // GET /Admin/Products
+        // ─────────────────────────────────────────
+        // PRODUCTS LIST — GET /Admin/Products
+        // ─────────────────────────────────────────
         public async Task<IActionResult> Products()
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
@@ -42,7 +49,10 @@ namespace Eneru.Controllers
             return View(products);
         }
 
-        // GET /Admin/CreateProduct
+        // ─────────────────────────────────────────
+        // CREATE PRODUCT — GET /Admin/CreateProduct
+        // Shows the empty form
+        // ─────────────────────────────────────────
         public async Task<IActionResult> CreateProduct()
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
@@ -52,14 +62,26 @@ namespace Eneru.Controllers
             return View();
         }
 
-        // POST /Admin/CreateProduct
+        // ─────────────────────────────────────────
+        // CREATE PRODUCT — POST /Admin/CreateProduct
+        // Handles form submission with optional image upload
+        // ─────────────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> CreateProduct(
             string name, string description, decimal price,
-            string brand, int categoryId, string imageUrl)
+            string brand, int categoryId,
+            IFormFile? imageFile,   // uploaded file from the form
+            string? imageUrl)       // fallback: manual URL if no file uploaded
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
                 return RedirectToAction("Index", "Home");
+
+            // Try to save uploaded image first
+            // If no file uploaded — fall back to manual URL
+            // If no URL either — use placeholder
+            var savedImageUrl = await _imageUpload.SaveImageAsync(imageFile)
+                ?? imageUrl
+                ?? "/images/placeholder.jpg";
 
             _db.Products.Add(new Product
             {
@@ -68,7 +90,7 @@ namespace Eneru.Controllers
                 Price = price,
                 Brand = brand,
                 CategoryId = categoryId,
-                ImageUrl = string.IsNullOrEmpty(imageUrl) ? "/images/placeholder.jpg" : imageUrl,
+                ImageUrl = savedImageUrl,
                 IsAvailable = true,
                 CreatedAt = DateTime.UtcNow
             });
@@ -77,7 +99,10 @@ namespace Eneru.Controllers
             return RedirectToAction("Products");
         }
 
-        // GET /Admin/EditProduct/5
+        // ─────────────────────────────────────────
+        // EDIT PRODUCT — GET /Admin/EditProduct/5
+        // Loads existing product into form
+        // ─────────────────────────────────────────
         public async Task<IActionResult> EditProduct(int id)
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
@@ -90,11 +115,17 @@ namespace Eneru.Controllers
             return View(product);
         }
 
-        // POST /Admin/EditProduct
+        // ─────────────────────────────────────────
+        // EDIT PRODUCT — POST /Admin/EditProduct
+        // Saves changes with optional new image
+        // ─────────────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> EditProduct(
             int id, string name, string description, decimal price,
-            string brand, int categoryId, string imageUrl, bool isAvailable)
+            string brand, int categoryId,
+            IFormFile? imageFile,
+            string? imageUrl,
+            bool isAvailable)
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
                 return RedirectToAction("Index", "Home");
@@ -107,14 +138,20 @@ namespace Eneru.Controllers
             product.Price = price;
             product.Brand = brand;
             product.CategoryId = categoryId;
-            product.ImageUrl = imageUrl;
             product.IsAvailable = isAvailable;
+
+            // Only update image if a new file was uploaded or new URL provided
+            var newImageUrl = await _imageUpload.SaveImageAsync(imageFile) ?? imageUrl;
+            if (!string.IsNullOrEmpty(newImageUrl))
+                product.ImageUrl = newImageUrl;
 
             await _db.SaveChangesAsync();
             return RedirectToAction("Products");
         }
 
-        // POST /Admin/DeleteProduct
+        // ─────────────────────────────────────────
+        // DELETE PRODUCT — POST /Admin/DeleteProduct
+        // ─────────────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -131,7 +168,9 @@ namespace Eneru.Controllers
             return RedirectToAction("Products");
         }
 
-        // GET /Admin/Orders
+        // ─────────────────────────────────────────
+        // ORDERS LIST — GET /Admin/Orders
+        // ─────────────────────────────────────────
         public async Task<IActionResult> Orders()
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
@@ -147,7 +186,9 @@ namespace Eneru.Controllers
             return View(orders);
         }
 
-        // POST /Admin/UpdateOrderStatus
+        // ─────────────────────────────────────────
+        // UPDATE ORDER STATUS — POST /Admin/UpdateOrderStatus
+        // ─────────────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, OrderStatus status)
         {

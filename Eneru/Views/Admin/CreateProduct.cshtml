@@ -44,8 +44,7 @@
         <!-- Main content -->
         <div class="col-md-10 py-4 px-5">
             <div class="d-flex align-items-center gap-3 mb-4">
-                <a href="/Admin/Products"
-                       class="text-muted text-decoration-none">
+                <a href="/Admin/Products" class="text-muted text-decoration-none">
                     <i class="bi bi-arrow-left"></i>
                 </a>
                 <h4 class="fw-bold text-uppercase mb-0" style="letter-spacing:1px;">
@@ -55,7 +54,12 @@
 
             <div class="card border-0 shadow-sm" style="max-width:600px;">
                 <div class="card-body p-4">
-                    <form method="post" action="/Admin/CreateProduct">
+
+                    <!-- enctype="multipart/form-data" is required for file uploads -->
+                    <!-- without this the file never reaches the server -->
+                    <form method="post" action="/Admin/CreateProduct"
+                          enctype="multipart/form-data">
+
                         <div class="mb-3">
                             <label class="form-label text-uppercase"
                                    style="font-size:0.75rem; letter-spacing:1px;">
@@ -63,6 +67,7 @@
                             </label>
                             <input type="text" name="name" required class="form-control" />
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label text-uppercase"
                                    style="font-size:0.75rem; letter-spacing:1px;">
@@ -71,6 +76,7 @@
                             <textarea name="description" rows="3"
                                       class="form-control"></textarea>
                         </div>
+
                         <div class="row g-3 mb-3">
                             <div class="col">
                                 <label class="form-label text-uppercase"
@@ -89,6 +95,7 @@
                                        class="form-control" />
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label text-uppercase"
                                    style="font-size:0.75rem; letter-spacing:1px;">
@@ -101,15 +108,30 @@
                                 }
                             </select>
                         </div>
+
                         <div class="mb-4">
                             <label class="form-label text-uppercase"
                                    style="font-size:0.75rem; letter-spacing:1px;">
-                                Image URL
+                                Product Image
                             </label>
+
+                            <!-- type="file" opens file picker dialog on computer -->
+                            <!-- accept limits what files user can pick (hint only) -->
+                            <!-- name="imageFile" must match IFormFile? imageFile in controller -->
+                            <input type="file" name="imageFile"
+                                   accept=".jpg,.jpeg,.png,.webp"
+                                   class="form-control mb-2" />
+
+                            <!-- Fallback: paste URL if no file to upload -->
                             <input type="text" name="imageUrl"
-                                   placeholder="/images/placeholder.jpg"
+                                   placeholder="Or paste image URL..."
                                    class="form-control" />
+
+                            <small class="text-muted">
+                                Upload a file OR paste a URL. File takes priority.
+                            </small>
                         </div>
+
                         <div class="d-flex gap-3">
                             <button type="submit" class="btn btn-dark px-4"
                                     style="text-transform:uppercase; letter-spacing:1px;">
@@ -121,6 +143,7 @@
                                 Cancel
                             </a>
                         </div>
+
                     </form>
                 </div>
             </div>

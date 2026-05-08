@@ -1,4 +1,5 @@
 using Eneru.Data;
+using Eneru.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=eneru.db"));
 
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddScoped<ImageUploadService>();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 
