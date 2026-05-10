@@ -1,4 +1,5 @@
 ﻿@model List<Eneru.Models.Product>
+@* This page receives a list of products filtered by category/search *@
 
 @{
     ViewData["Title"] = "Catalog";
@@ -7,21 +8,34 @@
 <div class="container">
     <div class="row">
 
-        <!-- Sidebar -->
+        <!-- SIDEBAR — col-lg-2 = narrow column on desktop, full width on mobile -->
         <div class="col-lg-2 mb-4">
-            <h6 class="text-uppercase fw-bold mb-3" style="letter-spacing:1px;">Categories</h6>
+
+            <h6 class="text-uppercase fw-bold mb-3"
+                style="letter-spacing:2px; font-size:0.75rem;">
+                Categories
+            </h6>
+
             <ul class="list-unstyled">
+                @* list-unstyled removes default bullet points from ul *@
+
+                <!-- "All" link — no category filter -->
                 <li class="mb-2">
                     <a href="/Products"
                            class="text-decoration-none @(ViewBag.CurrentCategory == null ? "fw-bold" : "text-muted")">
+                        @* fw-bold if no category selected, text-muted (grey) if a category is active *@
                         All
                     </a>
                 </li>
+
+                @* Loop through all categories from ViewBag *@
+                @* ViewBag.Categories was set in ProductsController.Index() *@
                 @foreach (var cat in ViewBag.Categories as List<Eneru.Models.Category>)
                 {
                     <li class="mb-2">
                         <a href="/Products?category=@cat.Slug"
                                class="text-decoration-none @(ViewBag.CurrentCategory == cat.Slug ? "fw-bold" : "text-muted")">
+                            @* Active category gets bold, others get grey *@
                             @cat.Name
                         </a>
                     </li>
@@ -29,45 +43,82 @@
             </ul>
         </div>
 
-        <!-- Main content -->
+        <!-- MAIN CONTENT — col-lg-10 = takes remaining space on desktop -->
         <div class="col-lg-10">
 
-            <!-- Search bar -->
+            <!-- SEARCH BAR -->
+            <!-- method="get" puts search term in URL: /Products?search=jeans -->
+            <!-- this way the URL is shareable and browser back button works -->
             <form method="get" action="/Products" class="mb-4">
                 <div class="input-group">
+                    @* input-group = Bootstrap class that joins input and button together *@
+
                     <input type="text"
                            name="search"
                            value="@ViewBag.CurrentSearch"
+                    @* value pre-fills with current search term *@
                            placeholder="Search products or brands..."
                            class="form-control" />
-                    <button type="submit" class="btn btn-dark">Search</button>
+
+                    <button type="submit" class="btn btn-dark">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </div>
             </form>
 
-            <!-- Product grid -->
+            <!-- EMPTY STATE — shown when no products match the filter -->
             @if (!Model.Any())
             {
+                @* Model.Any() returns true if list has at least one item *@
                 <div class="text-center py-5">
-                    <p class="text-muted">No products found.</p>
+                    <i class="bi bi-search" style="font-size:3rem; color:#ccc;"></i>
+                    <p class="text-muted mt-3">No products found.</p>
                     <a href="/Products" class="btn btn-dark">Clear filters</a>
                 </div>
             }
             else
             {
+                <!-- PRODUCT GRID -->
+                <!-- row-cols-1 = 1 per row on mobile -->
+                <!-- row-cols-md-2 = 2 per row on tablet -->
+                <!-- row-cols-lg-3 = 3 per row on desktop -->
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     @foreach (var product in Model)
                     {
                         <div class="col">
-                            <div class="card product-card h-100">
-                                <img src="@product.ImageUrl"
-                                     alt="@product.Name"
-                                     class="card-img-top" />
-                                <div class="card-body">
-                                    <p class="text-muted mb-1" style="font-size:0.8rem;">
+                            <div class="card product-card h-100 border-0">
+                                @* product-card class applies zoom effect from _Layout.cshtml CSS *@
+
+                                <!-- Image with link to details -->
+                                <a href="/Products/Details/@product.Id"
+                                       class="text-decoration-none">
+                                    <img src="@product.ImageUrl"
+                                         alt="@product.Name"
+                                         class="card-img-top" />
+                                    @* No inline height/object-fit here *@
+                                    @* Those styles come from .product-card img in CSS *@
+                                    @* Keeping them here would override CSS and break zoom *@
+                                </a>
+
+                                <div class="card-body px-0 pt-3 pb-0">
+
+                                    <!-- Brand -->
+                                    <p class="text-muted mb-1"
+                                           style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
                                         @product.Brand
                                     </p>
-                                    <h6 class="card-title mb-1">@product.Name</h6>
-                                    <p class="fw-bold mb-3">$@product.Price.ToString("0.00")</p>
+
+                                    <!-- Name -->
+                                    <h6 class="card-title mb-1 fw-bold">
+                                        @product.Name
+                                    </h6>
+
+                                    <!-- Price -->
+                                    <p class="fw-bold mb-3">
+                                        $@product.Price.ToString("0.00")
+                                    </p>
+
+                                    <!-- View Details button -->
                                     <a href="/Products/Details/@product.Id"
                                            class="btn btn-dark w-100">
                                         View Details

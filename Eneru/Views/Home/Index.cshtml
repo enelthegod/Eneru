@@ -1,107 +1,189 @@
 ﻿@model List<Eneru.Models.Product>
+@* @model tells Razor what type of data this page receives from the controller *@
+@* List<Product> = a list of products passed from HomeController.Index() *@
 
 @{
     ViewData["Title"] = "Eneru — Modern Fashion";
+    @* ViewData["Title"] sets the browser tab title *@
+    @* _Layout.cshtml uses it: <title>@ViewData["Title"] - Eneru</title> *@
 }
 
-<!-- Hero Section -->
-<div style="background:#111; color:white; padding:6rem 0; margin-top:-1.5rem;">
+<!-- HERO SECTION -->
+<!-- full width dark banner — margin-top:-1.5rem pulls it up to remove gap after navbar -->
+<div style="background:#111; color:white; padding:7rem 0; margin-top:-1.5rem;">
     <div class="container text-center">
-        <p class="text-uppercase mb-2"
-               style="letter-spacing:4px; font-size:0.8rem; color:#aaa;">
+        @* container = Bootstrap class that centers and limits max-width *@
+        @* text-center = centers all text inside *@
+
+        <!-- Small subtitle above heading -->
+        <p class="text-uppercase mb-3"
+               style="letter-spacing:6px; font-size:0.75rem; color:#888;">
             New Collection 2026
         </p>
+
+        <!-- Main hero heading -->
+        <!-- <br> = line break — splits "DEFINE" and "YOUR STYLE" onto two lines -->
         <h1 class="fw-bold mb-4"
-            style="font-size:3.5rem; letter-spacing:2px;">
-            DEFINE YOUR STYLE
+            style="font-size:3.5rem; letter-spacing:3px; line-height:1.1;">
+            DEFINE<br>YOUR STYLE
         </h1>
-        <p class="mb-5" style="color:#aaa; max-width:500px; margin:0 auto 2rem;">
+
+        <!-- Subtitle paragraph -->
+        <!-- max-width:420px limits line length so it doesn't stretch too wide -->
+        <p class="mb-5"
+               style="color:#aaa; max-width:420px; margin:0 auto 2.5rem; font-size:0.95rem; line-height:1.8;">
             Curated fashion from the world's leading brands.
             Discover pieces that speak to you.
         </p>
-        <div class="d-flex gap-3 justify-content-center">
-            <a href="/Products" class="btn btn-light px-5 py-2"
-                   style="text-transform:uppercase; letter-spacing:1px; border-radius:0;">
+
+        <!-- Two CTA buttons side by side -->
+        <!-- d-flex = display flex (side by side) -->
+        <!-- gap-3 = space between buttons -->
+        <!-- flex-wrap = buttons wrap to next line on very small screens -->
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="/Products"
+                   class="btn btn-light px-5 py-2"
+                   style="text-transform:uppercase; letter-spacing:2px; border-radius:0; font-size:0.8rem;">
                 Shop Now
             </a>
-            <a href="/Products?category=shoes" class="btn btn-outline-light px-5 py-2"
-                   style="text-transform:uppercase; letter-spacing:1px; border-radius:0;">
-                Shoes
+            <a href="/Products?category=shoes"
+                   class="btn btn-outline-light px-5 py-2"
+                   style="text-transform:uppercase; letter-spacing:2px; border-radius:0; font-size:0.8rem;">
+                New Shoes
             </a>
         </div>
     </div>
 </div>
 
-<!-- Category Strips -->
+<!-- CATEGORY QUICK LINKS -->
+<!-- 4 boxes linking to filtered catalog pages -->
 <div class="container my-5">
+    @* my-5 = margin top and bottom 5 units *@
     <div class="row g-3">
-        <div class="col-md-4">
+        @* row = Bootstrap grid row *@
+        @* g-3 = gap between columns *@
+
+        <!-- col-6 = half width on mobile, col-md-3 = quarter width on tablet+ -->
+        <div class="col-6 col-md-3">
             <a href="/Products?category=tops" class="text-decoration-none">
-                <div class="p-4 text-center"
-                     style="background:#f5f5f5; transition:background 0.2s;"
-                     onmouseover="this.style.background='#ebebeb'"
-                     onmouseout="this.style.background='#f5f5f5'">
-                    <i class="bi bi-person" style="font-size:2rem;"></i>
-                    <p class="mb-0 mt-2 fw-bold text-uppercase"
-                       style="letter-spacing:1px; font-size:0.85rem;">Tops</p>
+                @* text-decoration-none removes underline from link *@
+                <div class="text-center py-4 px-3"
+                     style="background:white; border:1px solid #eee; transition:all 0.2s;"
+                     onmouseover="this.style.borderColor='#111'; this.style.background='#f8f8f8'"
+                     onmouseout="this.style.borderColor='#eee'; this.style.background='white'">
+                    @* onmouseover/onmouseout = inline JS for hover color change *@
+                    <i class="bi bi-person-standing" style="font-size:1.8rem; color:#111;"></i>
+                    <p class="mb-0 mt-2 fw-bold text-dark text-uppercase"
+                       style="letter-spacing:2px; font-size:0.75rem;">Tops</p>
                 </div>
             </a>
         </div>
-        <div class="col-md-4">
+
+        <div class="col-6 col-md-3">
+            <a href="/Products?category=bottoms" class="text-decoration-none">
+                <div class="text-center py-4 px-3"
+                     style="background:white; border:1px solid #eee; transition:all 0.2s;"
+                     onmouseover="this.style.borderColor='#111'; this.style.background='#f8f8f8'"
+                     onmouseout="this.style.borderColor='#eee'; this.style.background='white'">
+                    <i class="bi bi-columns-gap" style="font-size:1.8rem; color:#111;"></i>
+                    <p class="mb-0 mt-2 fw-bold text-dark text-uppercase"
+                       style="letter-spacing:2px; font-size:0.75rem;">Bottoms</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-3">
             <a href="/Products?category=shoes" class="text-decoration-none">
-                <div class="p-4 text-center"
-                     style="background:#f5f5f5; transition:background 0.2s;"
-                     onmouseover="this.style.background='#ebebeb'"
-                     onmouseout="this.style.background='#f5f5f5'">
-                    <i class="bi bi-lightning" style="font-size:2rem;"></i>
-                    <p class="mb-0 mt-2 fw-bold text-uppercase"
-                       style="letter-spacing:1px; font-size:0.85rem;">Shoes</p>
+                <div class="text-center py-4 px-3"
+                     style="background:white; border:1px solid #eee; transition:all 0.2s;"
+                     onmouseover="this.style.borderColor='#111'; this.style.background='#f8f8f8'"
+                     onmouseout="this.style.borderColor='#eee'; this.style.background='white'">
+                    <i class="bi bi-lightning" style="font-size:1.8rem; color:#111;"></i>
+                    <p class="mb-0 mt-2 fw-bold text-dark text-uppercase"
+                       style="letter-spacing:2px; font-size:0.75rem;">Shoes</p>
                 </div>
             </a>
         </div>
-        <div class="col-md-4">
+
+        <div class="col-6 col-md-3">
             <a href="/Products?category=accessories" class="text-decoration-none">
-                <div class="p-4 text-center"
-                     style="background:#f5f5f5; transition:background 0.2s;"
-                     onmouseover="this.style.background='#ebebeb'"
-                     onmouseout="this.style.background='#f5f5f5'">
-                    <i class="bi bi-bag" style="font-size:2rem;"></i>
-                    <p class="mb-0 mt-2 fw-bold text-uppercase"
-                       style="letter-spacing:1px; font-size:0.85rem;">Accessories</p>
+                <div class="text-center py-4 px-3"
+                     style="background:white; border:1px solid #eee; transition:all 0.2s;"
+                     onmouseover="this.style.borderColor='#111'; this.style.background='#f8f8f8'"
+                     onmouseout="this.style.borderColor='#eee'; this.style.background='white'">
+                    <i class="bi bi-bag" style="font-size:1.8rem; color:#111;"></i>
+                    <p class="mb-0 mt-2 fw-bold text-dark text-uppercase"
+                       style="letter-spacing:2px; font-size:0.75rem;">Accessories</p>
                 </div>
             </a>
         </div>
     </div>
 </div>
 
-<!-- Featured Products -->
+<!-- FEATURED PRODUCTS -->
 <div class="container mb-5">
+
+    <!-- Section header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5 class="fw-bold text-uppercase mb-0" style="letter-spacing:2px;">
+        @* justify-content-between = pushes items to opposite ends *@
+        @* align-items-center = vertically centers them *@
+        <h5 class="fw-bold text-uppercase mb-0"
+            style="letter-spacing:3px; font-size:0.85rem;">
             Featured
         </h5>
-        <a href="/Products" class="text-muted text-decoration-none"
-               style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px;">
+        <a href="/Products"
+               class="text-dark text-decoration-none"
+               style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">
             View All <i class="bi bi-arrow-right"></i>
         </a>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <!-- Product grid -->
+    <!-- row-cols-1 = 1 column on mobile -->
+    <!-- row-cols-md-2 = 2 columns on tablet -->
+    <!-- row-cols-lg-4 = 4 columns on desktop -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
         @foreach (var product in Model)
         {
+            @* Loop through each product passed from HomeController *@
             <div class="col">
-                <div class="card product-card h-100">
-                    <img src="@product.ImageUrl"
-                         alt="@product.Name"
-                         class="card-img-top" />
-                    <div class="card-body">
-                        <p class="text-muted mb-1" style="font-size:0.8rem;">
+                <div class="card product-card h-100 border-0">
+                    @* product-card = our custom CSS class with zoom effect *@
+                    @* h-100 = height 100% so all cards same height in a row *@
+
+                    <!-- Image wrapped in link — clicking image goes to details -->
+                    <a href="/Products/Details/@product.Id" class="text-decoration-none">
+                        <img src="@product.ImageUrl"
+                             alt="@product.Name"
+                             class="card-img-top" />
+                        @* card-img-top = Bootstrap class, rounds top corners *@
+                        @* our CSS .product-card img sets height:320px and zoom *@
+                    </a>
+
+                    <div class="card-body px-0 pt-3 pb-0">
+                        @* px-0 = no horizontal padding *@
+                        @* pt-3 = padding top 3 units *@
+
+                        <!-- Brand name -->
+                        <p class="text-muted mb-1"
+                               style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
                             @product.Brand
                         </p>
-                        <h6 class="card-title mb-1">@product.Name</h6>
-                        <p class="fw-bold mb-3">$@product.Price.ToString("0.00")</p>
+
+                        <!-- Product name -->
+                        <h6 class="card-title mb-1 fw-bold">@product.Name</h6>
+
+                        <!-- Price -->
+                        <p class="mb-3" style="font-size:0.95rem;">
+                            $@product.Price.ToString("0.00")
+                            @* ToString("0.00") formats decimal to always show 2 decimal places *@
+                            @* e.g. 49.9 becomes "49.90" *@
+                        </p>
+
+                        <!-- Button to product details page -->
                         <a href="/Products/Details/@product.Id"
-                               class="btn btn-dark w-100">
+                               class="btn btn-dark w-100"
+                               style="font-size:0.75rem;">
                             View Details
                         </a>
                     </div>
@@ -111,18 +193,34 @@
     </div>
 </div>
 
-<!-- Banner -->
-<div style="background:#111; color:white; padding:4rem 0;" class="mb-0">
-    <div class="container text-center">
-        <h4 class="fw-bold text-uppercase mb-2" style="letter-spacing:3px;">
-            Free Shipping
-        </h4>
-        <p style="color:#aaa; font-size:0.9rem;">
-            On all orders over $150 — worldwide delivery
-        </p>
-        <a href="/Products" class="btn btn-outline-light mt-2"
-               style="border-radius:0; text-transform:uppercase; letter-spacing:1px;">
-            Shop Now
-        </a>
+<!-- FREE SHIPPING BANNER -->
+<!-- dark full-width section at the bottom of the page -->
+<div style="background:#111; color:white; padding:4rem 0;">
+    <div class="container">
+
+        <!-- row splits into two columns — text left, button right -->
+        <div class="row align-items-center">
+
+            <!-- Left column — takes 8 of 12 Bootstrap grid columns -->
+            <div class="col-md-8">
+                <h4 class="fw-bold text-uppercase mb-1" style="letter-spacing:3px;">
+                    Free Worldwide Shipping
+                </h4>
+                <p style="color:#aaa; font-size:0.9rem; margin:0;">
+                    On all orders over $150 — delivered to your door
+                </p>
+            </div>
+
+            <!-- Right column — takes 4 of 12 Bootstrap grid columns -->
+            <!-- text-md-end = right-align text on tablet and above -->
+            <!-- mt-3 mt-md-0 = top margin on mobile, no margin on tablet+ -->
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="/Products"
+                       class="btn btn-outline-light px-5"
+                       style="border-radius:0; text-transform:uppercase; letter-spacing:2px; font-size:0.8rem;">
+                    Shop Now
+                </a>
+            </div>
+        </div>
     </div>
 </div>

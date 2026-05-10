@@ -5,30 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Eneru</title>
 
-  
+    <!-- Bootstrap CSS — pre-built styles library loaded from internet CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet" />
 
-
+    <!-- Bootstrap Icons — icon library, used for bag, gear, arrow icons etc -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
           rel="stylesheet" />
 
     <style>
-            
+            /* Base styles applied to entire site */
             body {
                 background-color: #f8f8f8;
                 font-family: 'Helvetica Neue', sans-serif;
-            
+                /* flex trick to keep footer at bottom of page always */
+                /* body is split into 3 rows: navbar + main + footer */
                 display: flex;
                 flex-direction: column;
-                min-height: 100vh; 
+                /* min-height:100vh means body is at least full screen height */
+                /* vh = viewport height, 100vh = 100% of screen height */
+                min-height: 100vh;
             }
 
-          
+            /* main grows to fill all available space between navbar and footer */
+            /* flex-grow:1 means "take all remaining space" */
             main {
                 flex-grow: 1;
             }
 
+            /* Logo text in navbar */
             .navbar-brand {
                 font-size: 1.5rem;
                 font-weight: 700;
@@ -36,33 +41,53 @@
                 text-transform: uppercase;
             }
 
-          
+            /* Navigation links */
             .nav-link {
                 font-size: 0.85rem;
                 text-transform: uppercase;
                 letter-spacing: 1px;
             }
 
-          
+            /* Product card wrapper */
+            /* overflow:hidden is the KEY — it clips the zoomed image inside card borders */
+            /* without this the image would zoom outside the card boundaries */
             .product-card {
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
                 border: none;
                 background: white;
+                overflow: hidden;
+                /* smooth shadow transition on hover */
+                transition: box-shadow 0.3s ease;
             }
 
-               
+                /* Card shadow appears when mouse hovers over card */
                 .product-card:hover {
-                    transform: translateY(-4px);
-                    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+                    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+                    /* rgba(0,0,0,0.12) = black with 12% opacity = subtle shadow */
                 }
 
+                /* Image inside product card */
                 .product-card img {
-                    height: 280px;
-                    object-fit: cover; 
-                    background: #f0f0f0; 
+                    height: 320px;
+                    width: 100%;
+                    /* object-fit:cover fills the box and crops — no stretching */
+                    object-fit: cover;
+                    /* grey background shown while image is loading */
+                    background: #f0f0f0;
+                    /* THIS creates the zoom animation */
+                    /* transform property will change smoothly over 0.4 seconds */
+                    transition: transform 0.4s ease;
+                    /* block removes small gap below image caused by inline elements */
+                    display: block;
                 }
 
-           
+                /* When mouse is over .product-card — scale up the image inside */
+                /* scale(1.08) = 108% of original size = 8% zoom */
+                /* overflow:hidden on .product-card clips it so it stays inside */
+                .product-card:hover img {
+                    transform: scale(1.08);
+                }
+
+            /* All dark buttons — sharp corners, uppercase, spaced letters */
             .btn-dark {
                 border-radius: 0;
                 text-transform: uppercase;
@@ -70,7 +95,7 @@
                 font-size: 0.8rem;
             }
 
-     
+            /* Footer background */
             footer {
                 background: #111;
                 color: #aaa;
@@ -79,65 +104,77 @@
 </head>
 <body>
 
-
+    <!-- NAVBAR -->
+    <!-- sticky-top = sticks to top of screen when scrolling -->
+    <!-- navbar-expand-lg = collapses into burger menu on small screens -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
         <div class="container">
 
+            <!-- Logo — clicking takes you to home page -->
             <a class="navbar-brand" href="/">Eneru</a>
 
-
+            <!-- Burger menu button — only visible on mobile -->
+            <!-- data-bs-toggle/target = Bootstrap JS attributes -->
+            <!-- they tell Bootstrap which element to show/hide on click -->
             <button class="navbar-toggler" type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-   
+            <!-- Collapsible navbar content -->
+            <!-- on mobile this is hidden until burger button is clicked -->
             <div class="collapse navbar-collapse" id="navbarNav">
 
-              
+                <!-- Left side links — me-auto pushes everything else to the right -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/Products">Catalog</a>
                     </li>
                 </ul>
 
-                
+                <!-- Right side links — ms-auto pushes this group to the right -->
                 <ul class="navbar-nav ms-auto align-items-center gap-2">
 
-               
+                    @* Check if user is logged in by looking for UserId in session *@
                     @if (Context.Session.GetInt32("UserId") != null)
                     {
-
+                        @* Show Admin link only if email matches hardcoded admin email *@
                         @if (Context.Session.GetString("UserEmail") == "admin@eneru.com")
                         {
                             <li class="nav-item">
                                 <a class="nav-link" href="/Admin">
+                                    <!-- bi-gear = gear icon from Bootstrap Icons -->
                                     <i class="bi bi-gear"></i> Admin
                                 </a>
                             </li>
                         }
 
-
+                        @* Read cart count from session — ?? 0 means "if null use 0" *@
                         var cartCount = Context.Session.GetInt32("CartCount") ?? 0;
 
                         <li class="nav-item">
                             <a class="nav-link" href="/Cart">
                                 <i class="bi bi-bag"></i>
-         
+                                @* Only show number if cart has items *@
                                 @(cartCount > 0 ? $"({cartCount})" : "")
                             </a>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link" href="/Orders/MyOrders">
                                 <i class="bi bi-clock-history"></i> Orders
                             </a>
                         </li>
+
+                        <!-- Show logged in user's name — text-muted makes it grey -->
                         <li class="nav-item">
                             <span class="nav-link text-muted">
                                 @Context.Session.GetString("UserName")
                             </span>
                         </li>
+
+                        <!-- Logout button — POST request clears session -->
                         <li class="nav-item">
                             <form method="post" action="/Account/Logout">
                                 <button type="submit" class="btn btn-outline-dark btn-sm">
@@ -148,6 +185,7 @@
                     }
                     else
                     {
+                        <!-- Not logged in — show Login and Register links -->
                         <li class="nav-item">
                             <a class="nav-link" href="/Account/Login">Login</a>
                         </li>
@@ -162,12 +200,17 @@
         </div>
     </nav>
 
+    <!-- MAIN CONTENT AREA -->
+    <!-- flex-grow:1 in CSS makes this expand to fill space between nav and footer -->
+    <!-- py-4 = padding top and bottom 4 units = 24px -->
+    <!-- @RenderBody() = where each page's content gets inserted -->
     <main class="py-4">
         @RenderBody()
-
     </main>
 
-
+    <!-- FOOTER -->
+    <!-- always stays at bottom because of flexbox trick on body -->
+    <!-- py-5 = padding top and bottom 5 units = 48px -->
     <footer class="py-5">
         <div class="container text-center">
             <p class="mb-1"
@@ -180,6 +223,7 @@
         </div>
     </footer>
 
+    <!-- Bootstrap JS — required for burger menu and other interactive components -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
     </script>
 </body>
