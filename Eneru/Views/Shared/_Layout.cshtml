@@ -5,225 +5,433 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Eneru</title>
 
-    <!-- Bootstrap CSS — pre-built styles library loaded from internet CDN -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet" />
 
-    <!-- Bootstrap Icons — icon library, used for bag, gear, arrow icons etc -->
+    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
           rel="stylesheet" />
 
+    <!-- Google Fonts — Cormorant for headings (luxury feel), Inter for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap"
+          rel="stylesheet" />
+
     <style>
-            /* Base styles applied to entire site */
-            body {
-                background-color: #f8f8f8;
-                font-family: 'Helvetica Neue', sans-serif;
-                /* flex trick to keep footer at bottom of page always */
-                /* body is split into 3 rows: navbar + main + footer */
-                display: flex;
-                flex-direction: column;
-                /* min-height:100vh means body is at least full screen height */
-                /* vh = viewport height, 100vh = 100% of screen height */
-                min-height: 100vh;
+            /* ─── ROOT VARIABLES ─── */
+            /* CSS variables — change one value, updates everywhere */
+            :root {
+                --black: #0a0a0a;
+                --white: #ffffff;
+                --grey-light: #f5f5f5;
+                --grey-mid: #e0e0e0;
+                --grey-text: #767676;
+                --transition: 0.3s ease;
             }
 
-            /* main grows to fill all available space between navbar and footer */
-            /* flex-grow:1 means "take all remaining space" */
+            /* ─── BASE ─── */
+            * {
+                /* removes default margins/paddings from all elements */
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                font-weight: 300;
+                background: var(--white);
+                color: var(--black);
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+                /* letter-spacing slightly wider for luxury feel */
+                letter-spacing: 0.02em;
+            }
+
             main {
                 flex-grow: 1;
             }
 
-            /* Logo text in navbar */
-            .navbar-brand {
-                font-size: 1.5rem;
-                font-weight: 700;
+            /* ─── TYPOGRAPHY ─── */
+            h1, h2, h3, h4, h5 {
+                /* Cormorant = serif luxury font for all headings */
+                font-family: 'Cormorant Garamond', serif;
+                font-weight: 400;
+                letter-spacing: 0.05em;
+            }
+
+            /* ─── TOP ANNOUNCEMENT BANNER ─── */
+            /* thin strip at very top of page — like Farfetch's promo bar */
+            .announcement-bar {
+                background: var(--black);
+                color: var(--white);
+                text-align: center;
+                padding: 8px;
+                font-size: 0.7rem;
                 letter-spacing: 2px;
                 text-transform: uppercase;
             }
 
-            /* Navigation links */
-            .nav-link {
-                font-size: 0.85rem;
-                text-transform: uppercase;
-                letter-spacing: 1px;
+            /* ─── NAVBAR ─── */
+            .main-nav {
+                background: var(--white);
+                border-bottom: 1px solid var(--grey-mid);
+                padding: 0;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                /* z-index keeps navbar above other content when sticky */
             }
 
-            /* Product card wrapper */
-            /* overflow:hidden is the KEY — it clips the zoomed image inside card borders */
-            /* without this the image would zoom outside the card boundaries */
-            .product-card {
+            .nav-inner {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 64px;
+                padding: 0 2rem;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+
+            .nav-logo {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.6rem;
+                font-weight: 500;
+                letter-spacing: 6px;
+                text-transform: uppercase;
+                color: var(--black);
+                text-decoration: none;
+            }
+
+            .nav-links {
+                display: flex;
+                gap: 2rem;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+
+                .nav-links a {
+                    font-size: 0.72rem;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    color: var(--black);
+                    text-decoration: none;
+                    /* underline grows from left on hover */
+                    position: relative;
+                    padding-bottom: 2px;
+                }
+
+                    /* animated underline on nav links */
+                    .nav-links a::after {
+                        content: '';
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        width: 0;
+                        height: 1px;
+                        background: var(--black);
+                        transition: width var(--transition);
+                    }
+
+                    .nav-links a:hover::after {
+                        width: 100%;
+                    }
+
+            /* ─── BUTTONS ─── */
+            .btn-eneru {
+                background: var(--black);
+                color: var(--white);
                 border: none;
-                background: white;
-                overflow: hidden;
-                /* smooth shadow transition on hover */
-                transition: box-shadow 0.3s ease;
+                padding: 12px 32px;
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                transition: background var(--transition), color var(--transition);
+                border-radius: 0;
+                font-family: 'Inter', sans-serif;
+                font-weight: 400;
             }
 
-                /* Card shadow appears when mouse hovers over card */
-                .product-card:hover {
-                    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-                    /* rgba(0,0,0,0.12) = black with 12% opacity = subtle shadow */
+                .btn-eneru:hover {
+                    background: #333;
+                    color: var(--white);
                 }
 
-                /* Image inside product card */
-                .product-card img {
-                    height: 320px;
-                    width: 100%;
-                    /* object-fit:cover fills the box and crops — no stretching */
-                    object-fit: cover;
-                    /* grey background shown while image is loading */
-                    background: #f0f0f0;
-                    /* THIS creates the zoom animation */
-                    /* transform property will change smoothly over 0.4 seconds */
-                    transition: transform 0.4s ease;
-                    /* block removes small gap below image caused by inline elements */
-                    display: block;
-                }
-
-                /* When mouse is over .product-card — scale up the image inside */
-                /* scale(1.08) = 108% of original size = 8% zoom */
-                /* overflow:hidden on .product-card clips it so it stays inside */
-                .product-card:hover img {
-                    transform: scale(1.08);
-                }
-
-            /* All dark buttons — sharp corners, uppercase, spaced letters */
-            .btn-dark {
+            .btn-eneru-outline {
+                background: transparent;
+                color: var(--white);
+                border: 1px solid var(--white);
+                padding: 12px 32px;
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                transition: all var(--transition);
                 border-radius: 0;
+                font-family: 'Inter', sans-serif;
+            }
+
+                .btn-eneru-outline:hover {
+                    background: var(--white);
+                    color: var(--black);
+                }
+
+            .btn-eneru-dark-outline {
+                background: transparent;
+                color: var(--black);
+                border: 1px solid var(--black);
+                padding: 10px 28px;
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                transition: all var(--transition);
+                border-radius: 0;
+                font-family: 'Inter', sans-serif;
+            }
+
+                .btn-eneru-dark-outline:hover {
+                    background: var(--black);
+                    color: var(--white);
+                }
+
+            /* ─── PRODUCT CARDS ─── */
+            .product-card {
+                background: var(--white);
+                border: none;
+                overflow: hidden;
+                cursor: pointer;
+            }
+
+                /* image wrapper controls zoom */
+                .product-card .img-wrap {
+                    overflow: hidden;
+                    /* padding-top trick creates fixed aspect ratio box */
+                    /* 125% = image is taller than wide, like Farfetch product photos */
+                    position: relative;
+                    padding-top: 125%;
+                }
+
+                    /* image fills the aspect ratio box absolutely */
+                    .product-card .img-wrap img {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        transition: transform 0.6s ease;
+                        background: var(--grey-light);
+                    }
+
+                /* smooth zoom on hover */
+                .product-card:hover .img-wrap img {
+                    transform: scale(1.06);
+                }
+
+                /* product info below image */
+                .product-card .card-info {
+                    padding: 12px 0 0;
+                }
+
+                .product-card .card-brand {
+                    font-size: 0.65rem;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    color: var(--grey-text);
+                    margin-bottom: 4px;
+                }
+
+                .product-card .card-name {
+                    font-family: 'Cormorant Garamond', serif;
+                    font-size: 1.05rem;
+                    color: var(--black);
+                    margin-bottom: 6px;
+                    line-height: 1.3;
+                }
+
+                .product-card .card-price {
+                    font-size: 0.85rem;
+                    font-weight: 400;
+                    color: var(--black);
+                }
+
+            /* ─── FOOTER ─── */
+            .site-footer {
+                background: var(--black);
+                color: #888;
+                padding: 4rem 0 2rem;
+                margin-top: auto;
+            }
+
+            .footer-logo {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 2rem;
+                letter-spacing: 6px;
+                color: var(--white);
+                margin-bottom: 1rem;
+            }
+
+            .footer-links a {
+                color: #888;
+                text-decoration: none;
+                font-size: 0.72rem;
                 text-transform: uppercase;
                 letter-spacing: 1px;
-                font-size: 0.8rem;
+                transition: color var(--transition);
             }
 
-            /* Footer background */
-            footer {
-                background: #111;
-                color: #aaa;
+                .footer-links a:hover {
+                    color: var(--white);
+                }
+
+            /* ─── FORMS ─── */
+            .form-control, .form-select {
+                border-radius: 0;
+                border: 1px solid var(--grey-mid);
+                font-size: 0.85rem;
+                padding: 10px 14px;
             }
+
+                .form-control:focus, .form-select:focus {
+                    border-color: var(--black);
+                    box-shadow: none;
+                    /* removes Bootstrap blue glow on focus */
+                }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <!-- sticky-top = sticks to top of screen when scrolling -->
-    <!-- navbar-expand-lg = collapses into burger menu on small screens -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
-        <div class="container">
+    <!-- ANNOUNCEMENT BAR — thin promo strip at very top -->
+    <div class="announcement-bar">
+        Free shipping on orders over $150 &nbsp;·&nbsp; New collection available now
+    </div>
 
-            <!-- Logo — clicking takes you to home page -->
-            <a class="navbar-brand" href="/">Eneru</a>
+    <!-- MAIN NAVBAR -->
+    <nav class="main-nav">
+        <div class="nav-inner">
 
-            <!-- Burger menu button — only visible on mobile -->
-            <!-- data-bs-toggle/target = Bootstrap JS attributes -->
-            <!-- they tell Bootstrap which element to show/hide on click -->
-            <button class="navbar-toggler" type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <!-- Logo -->
+            <a href="/" class="nav-logo">Eneru</a>
 
-            <!-- Collapsible navbar content -->
-            <!-- on mobile this is hidden until burger button is clicked -->
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Center links -->
+            <ul class="nav-links d-none d-lg-flex">
+                <li><a href="/Products">New In</a></li>
+                <li><a href="/Products?category=tops">Tops</a></li>
+                <li><a href="/Products?category=bottoms">Bottoms</a></li>
+                <li><a href="/Products?category=shoes">Shoes</a></li>
+                <li><a href="/Products?category=accessories">Accessories</a></li>
+            </ul>
 
-                <!-- Left side links — me-auto pushes everything else to the right -->
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Products">Catalog</a>
+            <!-- Right side icons -->
+            <ul class="nav-links">
+                @if (Context.Session.GetInt32("UserId") != null)
+                {
+                    @if (Context.Session.GetString("UserEmail") == "admin@eneru.com")
+                    {
+                        <li>
+                            <a href="/Admin">
+                                <i class="bi bi-gear"></i>
+                            </a>
+                        </li>
+                    }
+
+                    var cartCount = Context.Session.GetInt32("CartCount") ?? 0;
+
+                    <li>
+                        <a href="/Cart">
+                            <i class="bi bi-bag"></i>
+                            @(cartCount > 0 ? $"({cartCount})" : "")
+                        </a>
                     </li>
-                </ul>
+                    <li>
+                        <a href="/Orders/MyOrders">
+                            <i class="bi bi-person"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <form method="post" action="/Account/Logout" style="margin:0;">
+                            <button type="submit"
+                                    style="background:none; border:none; padding:0; font-size:0.72rem; text-transform:uppercase; letter-spacing:2px; cursor:pointer; font-family:'Inter',sans-serif;">
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li><a href="/Account/Login">Login</a></li>
+                    <li><a href="/Account/Register">Register</a></li>
+                }
+            </ul>
 
-                <!-- Right side links — ms-auto pushes this group to the right -->
-                <ul class="navbar-nav ms-auto align-items-center gap-2">
-
-                    @* Check if user is logged in by looking for UserId in session *@
-                    @if (Context.Session.GetInt32("UserId") != null)
-                    {
-                        @* Show Admin link only if email matches hardcoded admin email *@
-                        @if (Context.Session.GetString("UserEmail") == "admin@eneru.com")
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Admin">
-                                    <!-- bi-gear = gear icon from Bootstrap Icons -->
-                                    <i class="bi bi-gear"></i> Admin
-                                </a>
-                            </li>
-                        }
-
-                        @* Read cart count from session — ?? 0 means "if null use 0" *@
-                        var cartCount = Context.Session.GetInt32("CartCount") ?? 0;
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Cart">
-                                <i class="bi bi-bag"></i>
-                                @* Only show number if cart has items *@
-                                @(cartCount > 0 ? $"({cartCount})" : "")
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Orders/MyOrders">
-                                <i class="bi bi-clock-history"></i> Orders
-                            </a>
-                        </li>
-
-                        <!-- Show logged in user's name — text-muted makes it grey -->
-                        <li class="nav-item">
-                            <span class="nav-link text-muted">
-                                @Context.Session.GetString("UserName")
-                            </span>
-                        </li>
-
-                        <!-- Logout button — POST request clears session -->
-                        <li class="nav-item">
-                            <form method="post" action="/Account/Logout">
-                                <button type="submit" class="btn btn-outline-dark btn-sm">
-                                    Logout
-                                </button>
-                            </form>
-                        </li>
-                    }
-                    else
-                    {
-                        <!-- Not logged in — show Login and Register links -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Account/Login">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-dark btn-sm" href="/Account/Register">
-                                Register
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </div>
         </div>
     </nav>
 
-    <!-- MAIN CONTENT AREA -->
-    <!-- flex-grow:1 in CSS makes this expand to fill space between nav and footer -->
-    <!-- py-4 = padding top and bottom 4 units = 24px -->
-    <!-- @RenderBody() = where each page's content gets inserted -->
-    <main class="py-4">
+    <!-- PAGE CONTENT -->
+    <main>
         @RenderBody()
     </main>
 
     <!-- FOOTER -->
-    <!-- always stays at bottom because of flexbox trick on body -->
-    <!-- py-5 = padding top and bottom 5 units = 48px -->
-    <footer class="py-5">
-        <div class="container text-center">
-            <p class="mb-1"
-                   style="font-size:1.2rem; font-weight:700; letter-spacing:2px; color:white;">
-                ENERU
-            </p>
-            <p class="mb-0" style="font-size:0.8rem;">
-                © 2026 Eneru. All rights reserved.
-            </p>
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <div class="footer-logo">Eneru</div>
+                    <p style="font-size:0.8rem; line-height:1.8;">
+                        Modern fashion curated for<br>the discerning individual.
+                    </p>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <p style="font-size:0.7rem; text-transform:uppercase; letter-spacing:2px; color:white; margin-bottom:1rem;">
+                        Shop
+                    </p>
+                    <div class="footer-links d-flex flex-column gap-2">
+                        <a href="/Products?category=tops">Tops</a>
+                        <a href="/Products?category=bottoms">Bottoms</a>
+                        <a href="/Products?category=shoes">Shoes</a>
+                        <a href="/Products?category=accessories">Accessories</a>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <p style="font-size:0.7rem; text-transform:uppercase; letter-spacing:2px; color:white; margin-bottom:1rem;">
+                        Account
+                    </p>
+                    <div class="footer-links d-flex flex-column gap-2">
+                        <a href="/Account/Login">Login</a>
+                        <a href="/Account/Register">Register</a>
+                        <a href="/Orders/MyOrders">My Orders</a>
+                        <a href="/Cart">Cart</a>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <p style="font-size:0.7rem; text-transform:uppercase; letter-spacing:2px; color:white; margin-bottom:1rem;">
+                        Info
+                    </p>
+                    <div class="footer-links d-flex flex-column gap-2">
+                        <a href="#">Free Shipping over $150</a>
+                        <a href="#">Easy Returns</a>
+                        <a href="#">Secure Payment</a>
+                    </div>
+                </div>
+            </div>
+            <div style="border-top:1px solid #222; padding-top:1.5rem; text-align:center;">
+                <p style="font-size:0.7rem; letter-spacing:1px; margin:0;">
+                    © 2026 ENERU. ALL RIGHTS RESERVED.
+                </p>
+            </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS — required for burger menu and other interactive components -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
     </script>
 </body>
