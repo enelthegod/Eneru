@@ -3,6 +3,7 @@ using System;
 using Eneru.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Eneru.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260513115006_UpdateProductImages")]
+    partial class UpdateProductImages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.6");
@@ -186,7 +189,7 @@ namespace Eneru.Migrations
                             CategoryId = 1,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Essential everyday white t-shirt made from 100% organic cotton.",
-                            ImageUrl = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=1000&fit=crop&q=80",
+                            ImageUrl = "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80",
                             IsAvailable = true,
                             Name = "Classic White Tee",
                             Price = 49.99m
@@ -198,7 +201,7 @@ namespace Eneru.Migrations
                             CategoryId = 2,
                             CreatedAt = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Modern slim fit black denim with stretch comfort technology.",
-                            ImageUrl = "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800&h=1000&fit=crop&q=80",
+                            ImageUrl = "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&q=80",
                             IsAvailable = true,
                             Name = "Slim Black Jeans",
                             Price = 129.99m
@@ -210,7 +213,7 @@ namespace Eneru.Migrations
                             CategoryId = 3,
                             CreatedAt = new DateTime(2024, 1, 3, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Clean minimalist leather sneakers. Versatile and timeless.",
-                            ImageUrl = "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=800&h=1000&fit=crop&q=80",
+                            ImageUrl = "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=800&q=80",
                             IsAvailable = true,
                             Name = "White Leather Sneakers",
                             Price = 189.99m
@@ -222,7 +225,7 @@ namespace Eneru.Migrations
                             CategoryId = 1,
                             CreatedAt = new DateTime(2024, 1, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Relaxed fit hoodie in premium heavyweight fleece.",
-                            ImageUrl = "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?w=800&h=1000&fit=crop&q=80",
+                            ImageUrl = "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=800&q=80",
                             IsAvailable = true,
                             Name = "Oversized Hoodie",
                             Price = 89.99m
@@ -234,7 +237,7 @@ namespace Eneru.Migrations
                             CategoryId = 2,
                             CreatedAt = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Utility cargo pants with multiple pockets. Perfect for everyday wear.",
-                            ImageUrl = "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800&h=1000&fit=crop&q=80",
+                            ImageUrl = "https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=800&q=80",
                             IsAvailable = true,
                             Name = "Cargo Pants",
                             Price = 119.99m
@@ -246,7 +249,7 @@ namespace Eneru.Migrations
                             CategoryId = 4,
                             CreatedAt = new DateTime(2024, 1, 6, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Full grain leather belt with brushed silver buckle.",
-                            ImageUrl = "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&h=1000&fit=crop&q=80",
+                            ImageUrl = "https://images.unsplash.com/photo-1624222247344-550fb60fe8ff?w=800&q=80",
                             IsAvailable = true,
                             Name = "Leather Belt",
                             Price = 59.99m
@@ -258,7 +261,7 @@ namespace Eneru.Migrations
                             CategoryId = 3,
                             CreatedAt = new DateTime(2024, 1, 7, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Lightweight performance sneakers with responsive cushioning.",
-                            ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=1000&fit=crop&q=80",
+                            ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80",
                             IsAvailable = true,
                             Name = "Running Sneakers",
                             Price = 159.99m
@@ -270,7 +273,7 @@ namespace Eneru.Migrations
                             CategoryId = 4,
                             CreatedAt = new DateTime(2024, 1, 8, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Durable canvas tote with internal zip pocket.",
-                            ImageUrl = "https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&h=1000&fit=crop&q=80",
+                            ImageUrl = "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=800&q=80",
                             IsAvailable = true,
                             Name = "Canvas Tote Bag",
                             Price = 45.99m

@@ -4,52 +4,286 @@
     ViewData["Title"] = Model.Name;
 }
 
-<div class="container">
-    <a href="/Products" class="text-muted text-decoration-none d-inline-flex align-items-center gap-1 mb-4">
-        <i class="bi bi-arrow-left"></i> Back to catalog
+<!-- Back link -->
+<div style="padding:1.2rem 2rem; border-bottom:1px solid var(--grey-mid);">
+    <a href="/Products"
+           style="font-size:0.7rem; text-transform:uppercase; letter-spacing:2px;
+        color:var(--grey-text); text-decoration:none;">
+        <i class="bi bi-arrow-left me-1"></i> Back to Catalog
     </a>
+</div>
 
-    <div class="row g-5">
+<div class="container-fluid px-0">
+    <div class="row g-0">
 
-        <!-- Product image -->
-        <div class="col-md-6">
-            <img src="@Model.ImageUrl"
-                 alt="@Model.Name"
-                 class="img-fluid w-100"
-                 style="height:500px; object-fit:cover; background:#f0f0f0;" />
+        <!-- LEFT — Image with zoom -->
+        <div class="col-lg-7"
+             style="border-right:1px solid var(--grey-mid);">
+
+           
+            <div id="imgContainer"
+                 style="position:relative; width:100%;
+                height:calc(100vh - 104px);
+                overflow:hidden; cursor:crosshair;
+                max-height:800px;">
+
+                <img id="mainImg"
+                     src="@Model.ImageUrl"
+                     alt="@Model.Name"
+                     style="position:absolute; top:0; left:0;
+                width:100%; height:100%;
+                object-fit:contain;
+                background:var(--grey-light);
+                transform-origin:0 0;
+                transition:transform 0.1s ease;" />
+
+                <!-- zoom lens square that follows cursor -->
+                <div id="zoomLens"
+                     style="display:none; position:absolute;
+                    width:100px; height:100px;
+                    border:1px solid rgba(255,255,255,0.9);
+                    background:rgba(255,255,255,0.1);
+                    pointer-events:none;
+                    transform:translate(-50%,-50%);">
+                </div>
+
+                <!-- hint shown before hovering -->
+                <div id="zoomHint"
+                     style="position:absolute; bottom:1rem; left:1rem;
+                    font-size:0.62rem; text-transform:uppercase;
+                    letter-spacing:2px; color:white;
+                    background:rgba(0,0,0,0.45);
+                    padding:6px 14px;
+                    transition:opacity 0.3s ease;">
+                    <i class="bi bi-zoom-in me-1"></i> Hover to zoom
+                </div>
+
+            </div>
         </div>
 
-        <!-- Product info -->
-        <div class="col-md-6">
-            <p class="text-muted text-uppercase" style="letter-spacing:1px; font-size:0.85rem;">
+        <!-- RIGHT — Product info -->
+        <!-- position:sticky keeps info panel visible while scrolling image -->
+        <div class="col-lg-5"
+             style="padding:3rem 2.5rem;
+            position:sticky; top:104px;
+            align-self:flex-start;">
+
+            <!-- Brand -->
+            <p style="font-size:0.65rem; text-transform:uppercase;
+                letter-spacing:4px; color:var(--grey-text); margin-bottom:0.5rem;">
                 @Model.Brand
             </p>
-            <h2 class="fw-bold mb-1">@Model.Name</h2>
-            <p class="text-muted mb-3">@Model.Category?.Name</p>
-            <h3 class="fw-bold mb-4">$@Model.Price.ToString("0.00")</h3>
-            <p class="text-muted mb-4">@Model.Description</p>
 
+            <!-- Name -->
+            <h1 style="font-family:'Cormorant Garamond',serif;
+                font-size:2.5rem; font-weight:300;
+                letter-spacing:2px; line-height:1.15;
+                margin-bottom:1rem;">
+                @Model.Name
+            </h1>
+
+            <!-- Category -->
+            <p style="font-size:0.65rem; text-transform:uppercase;
+                letter-spacing:3px; color:var(--grey-text);
+                padding-bottom:1.5rem; margin-bottom:1.5rem;
+                border-bottom:1px solid var(--grey-mid);">
+                @Model.Category?.Name
+            </p>
+
+            <!-- Price -->
+            <p style="font-size:1.6rem; font-weight:300;
+                letter-spacing:2px; margin-bottom:1.5rem;">
+                $@Model.Price.ToString("0.00")
+            </p>
+
+            <!-- Description -->
+            <p style="font-size:0.83rem; line-height:1.9;
+                color:#666; margin-bottom:2rem;">
+                @Model.Description
+            </p>
+
+            <!-- Add to cart -->
             @if (Context.Session.GetInt32("UserId") != null)
             {
-                <form method="post" action="/Cart/Add">
+                <form method="post" action="/Cart/Add" id="cartForm">
                     <input type="hidden" name="productId" value="@Model.Id" />
-                    <div class="d-flex gap-3 align-items-center mb-3">
-                        <input type="number" name="quantity" value="1"
-                               min="1" max="99"
-                               class="form-control"
-                               style="width:80px;" />
-                        <button type="submit" class="btn btn-dark flex-grow-1">
-                            <i class="bi bi-bag-plus"></i> Add to Cart
-                        </button>
+
+                    <!-- Quantity +/- -->
+                    <div style="margin-bottom:1.5rem;">
+                        <p style="font-size:0.62rem; text-transform:uppercase;
+                            letter-spacing:2px; margin-bottom:0.6rem;
+                            color:var(--grey-text);">
+                            Quantity
+                        </p>
+                        <div style="display:inline-flex; align-items:center;
+                            border:1px solid var(--grey-mid);">
+                            <button type="button" id="qtyMinus"
+                                    style="width:38px; height:38px; background:none;
+                                border:none; cursor:pointer; font-size:1rem;
+                                color:var(--black);">
+                                −
+                            </button>
+                            <input type="number" name="quantity" id="qtyInput"
+                                   value="1" min="1" max="99"
+                                   style="width:44px; height:38px; border:none;
+                            border-left:1px solid var(--grey-mid);
+                            border-right:1px solid var(--grey-mid);
+                            text-align:center; font-size:0.85rem;
+                            outline:none; font-family:'Inter',sans-serif;
+                            -moz-appearance:textfield;" />
+                            <button type="button" id="qtyPlus"
+                                    style="width:38px; height:38px; background:none;
+                                border:none; cursor:pointer; font-size:1rem;
+                                color:var(--black);">
+                                +
+                            </button>
+                        </div>
                     </div>
+
+                    <!-- Add to Cart button -->
+                    <button type="submit" id="addToCartBtn"
+                            style="width:100%; padding:15px;
+                        background:var(--black); color:white;
+                        border:none; font-size:0.68rem;
+                        text-transform:uppercase; letter-spacing:3px;
+                        cursor:pointer; font-family:'Inter',sans-serif;
+                        transition:background 0.3s;">
+                        <i class="bi bi-bag me-2"></i> Add to Cart
+                    </button>
                 </form>
             }
             else
             {
-                <a href="/Account/Login" class="btn btn-dark w-100">
-                    Login to add to cart
+                <a href="/Account/Login"
+                       style="display:block; text-align:center; padding:15px;
+                    background:var(--black); color:white;
+                    text-decoration:none; font-size:0.68rem;
+                    text-transform:uppercase; letter-spacing:3px;
+                    font-family:'Inter',sans-serif;">
+                    Login to Purchase
                 </a>
             }
+
+            <!-- Accordion -->
+            <div style="margin-top:2rem; border-top:1px solid var(--grey-mid);">
+
+                <div onclick="toggleDetail('details')"
+                     style="padding:1rem 0; border-bottom:1px solid var(--grey-mid);
+                    cursor:pointer; display:flex; justify-content:space-between;
+                    align-items:center; user-select:none;">
+                    <span style="font-size:0.68rem; text-transform:uppercase; letter-spacing:2px;">
+                        Product Details
+                    </span>
+                    <i class="bi bi-plus" id="icon-details"
+                       style="font-size:0.9rem; color:var(--grey-text);"></i>
+                </div>
+                <div id="details"
+                     style="display:none; padding:1rem 0;
+                    border-bottom:1px solid var(--grey-mid);
+                    font-size:0.82rem; line-height:2; color:#666;">
+                    <span style="text-transform:uppercase; letter-spacing:1px; font-size:0.68rem;">Brand:</span>
+                    @Model.Brand<br />
+                    <span style="text-transform:uppercase; letter-spacing:1px; font-size:0.68rem;">Category:</span>
+                    @Model.Category?.Name<br />
+                    <span style="text-transform:uppercase; letter-spacing:1px; font-size:0.68rem;">Status:</span>
+                    @(Model.IsAvailable ? "In Stock" : "Out of Stock")
+                </div>
+
+                <div onclick="toggleDetail('shipping')"
+                     style="padding:1rem 0; border-bottom:1px solid var(--grey-mid);
+                    cursor:pointer; display:flex; justify-content:space-between;
+                    align-items:center; user-select:none;">
+                    <span style="font-size:0.68rem; text-transform:uppercase; letter-spacing:2px;">
+                        Shipping & Returns
+                    </span>
+                    <i class="bi bi-plus" id="icon-shipping"
+                       style="font-size:0.9rem; color:var(--grey-text);"></i>
+                </div>
+                <div id="shipping"
+                     style="display:none; padding:1rem 0;
+                    border-bottom:1px solid var(--grey-mid);
+                    font-size:0.82rem; line-height:2; color:#666;">
+                    Free shipping on orders over $150.<br />
+                    Standard delivery 3–5 business days.<br />
+                    Free returns within 30 days.
+                </div>
+
+            </div>
+
         </div>
     </div>
 </div>
+
+<script>
+    // ─── ZOOM LENS ────────────────────────────────────────────────────
+    const container = document.getElementById('imgContainer');
+    const img       = document.getElementById('mainImg');
+    const lens      = document.getElementById('zoomLens');
+    const hint      = document.getElementById('zoomHint');
+    const ZOOM      = 2.5;
+
+    container.addEventListener('mouseenter', () => {
+        lens.style.display = 'block';
+        hint.style.opacity = '0';
+    });
+
+    container.addEventListener('mouseleave', () => {
+        lens.style.display = 'none';
+        hint.style.opacity = '1';
+        img.style.transform = 'scale(1)';
+    });
+
+    container.addEventListener('mousemove', (e) => {
+        // get cursor position relative to image container
+        const rect     = container.getBoundingClientRect();
+        const x        = e.clientX - rect.left;
+        const y        = e.clientY - rect.top;
+
+        // move lens to cursor
+        lens.style.left = x + 'px';
+        lens.style.top  = y + 'px';
+
+        // calculate zoom origin so cursor point stays in view
+        const xPct    = x / rect.width;
+        const yPct    = y / rect.height;
+        const originX = xPct * (1 - 1 / ZOOM) * 100;
+        const originY = yPct * (1 - 1 / ZOOM) * 100;
+
+        img.style.transformOrigin = `${originX}% ${originY}%`;
+        img.style.transform       = `scale(${ZOOM})`;
+    });
+
+    // ─── QUANTITY BUTTONS ─────────────────────────────────────────────
+    const qtyInput = document.getElementById('qtyInput');
+
+    document.getElementById('qtyMinus').addEventListener('click', () => {
+        const v = parseInt(qtyInput.value);
+        if (v > 1) qtyInput.value = v - 1;
+    });
+
+    document.getElementById('qtyPlus').addEventListener('click', () => {
+        const v = parseInt(qtyInput.value);
+        if (v < 99) qtyInput.value = v + 1;
+    });
+
+    // ─── ADD TO CART FEEDBACK ─────────────────────────────────────────
+    const cartForm = document.getElementById('cartForm');
+    const addBtn   = document.getElementById('addToCartBtn');
+
+    if (cartForm && addBtn) {
+        cartForm.addEventListener('submit', () => {
+            addBtn.innerHTML      = '<i class="bi bi-check me-2"></i> Added!';
+            addBtn.style.background = '#2d2d2d';
+        });
+    }
+
+    // ─── ACCORDION ───────────────────────────────────────────────────
+    function toggleDetail(id) {
+        const panel = document.getElementById(id);
+        const icon  = document.getElementById('icon-' + id);
+        const open  = panel.style.display !== 'none';
+
+        panel.style.display = open ? 'none'  : 'block';
+        icon.className      = open ? 'bi bi-plus' : 'bi bi-dash';
+    }
+</script>
