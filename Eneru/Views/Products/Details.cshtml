@@ -16,53 +16,49 @@
 <div class="container-fluid px-0">
     <div class="row g-0">
 
-        <!-- LEFT — Image with zoom -->
-        <div class="col-lg-7"
-             style="border-right:1px solid var(--grey-mid);">
+        <!-- LEFT — Image with magnifier -->
+        <div class="col-lg-7" style="border-right:1px solid var(--grey-mid);">
 
-           
-            <div id="imgContainer"
-                 style="position:relative; width:100%;
-                height:calc(100vh - 104px);
-                overflow:hidden; cursor:crosshair;
-                max-height:800px;">
+            <!-- Outer wrapper — position:relative so children can be positioned inside -->
+            <div style="position:relative;">
 
-                <img id="mainImg"
-                     src="@Model.ImageUrl"
-                     alt="@Model.Name"
-                     style="position:absolute; top:0; left:0;
-                width:100%; height:100%;
-                object-fit:contain;
-                background:var(--grey-light);
-                transform-origin:0 0;
-                transition:transform 0.1s ease;" />
+                <!-- Main image container -->
+                <!-- id used by JS to attach mouse events -->
+                <div id="imgContainer"
+                     style="position:relative; width:100%;
+                    padding-top:100%;
+                    overflow:hidden;
+                    cursor:none;
+                    background:var(--grey-light);">
 
-                <!-- zoom lens square that follows cursor -->
-                <div id="zoomLens"
-                     style="display:none; position:absolute;
-                    width:100px; height:100px;
-                    border:1px solid rgba(255,255,255,0.9);
-                    background:rgba(255,255,255,0.1);
-                    pointer-events:none;
-                    transform:translate(-50%,-50%);">
-                </div>
+                    <!-- Product image — fills the padding-top box -->
+                    <img id="mainImg"
+                         src="@Model.ImageUrl"
+                         alt="@Model.Name"
+                         style="position:absolute; top:0; left:0;
+                    width:100%; height:100%;
+                    object-fit:contain;
+                    background:var(--grey-light);" />
 
-                <!-- hint shown before hovering -->
-                <div id="zoomHint"
-                     style="position:absolute; bottom:1rem; left:1rem;
-                    font-size:0.62rem; text-transform:uppercase;
-                    letter-spacing:2px; color:white;
-                    background:rgba(0,0,0,0.45);
-                    padding:6px 14px;
-                    transition:opacity 0.3s ease;">
-                    <i class="bi bi-zoom-in me-1"></i> Hover to zoom
+                    <!-- Small lens square that follows cursor on the image -->
+                    <!-- pointer-events:none so mouse events pass through it -->
+                    <div id="lens"
+                         style="display:none;
+                        position:absolute;
+                        width:100px; height:100px;
+                        border:1px solid rgba(0,0,0,0.3);
+                        background:rgba(255,255,255,0.2);
+                        pointer-events:none;
+                        transform:translate(-50%,-50%);
+                        box-shadow:0 0 0 1px rgba(255,255,255,0.5);">
+                    </div>
+
                 </div>
 
             </div>
         </div>
 
         <!-- RIGHT — Product info -->
-        <!-- position:sticky keeps info panel visible while scrolling image -->
         <div class="col-lg-5"
              style="padding:3rem 2.5rem;
             position:sticky; top:104px;
@@ -102,13 +98,13 @@
                 @Model.Description
             </p>
 
-            <!-- Add to cart -->
+            <!-- Add to cart or login -->
             @if (Context.Session.GetInt32("UserId") != null)
             {
                 <form method="post" action="/Cart/Add" id="cartForm">
                     <input type="hidden" name="productId" value="@Model.Id" />
 
-                    <!-- Quantity +/- -->
+                    <!-- Quantity selector -->
                     <div style="margin-bottom:1.5rem;">
                         <p style="font-size:0.62rem; text-transform:uppercase;
                             letter-spacing:2px; margin-bottom:0.6rem;
@@ -119,8 +115,7 @@
                             border:1px solid var(--grey-mid);">
                             <button type="button" id="qtyMinus"
                                     style="width:38px; height:38px; background:none;
-                                border:none; cursor:pointer; font-size:1rem;
-                                color:var(--black);">
+                                border:none; cursor:pointer; font-size:1rem;">
                                 −
                             </button>
                             <input type="number" name="quantity" id="qtyInput"
@@ -133,8 +128,7 @@
                             -moz-appearance:textfield;" />
                             <button type="button" id="qtyPlus"
                                     style="width:38px; height:38px; background:none;
-                                border:none; cursor:pointer; font-size:1rem;
-                                color:var(--black);">
+                                border:none; cursor:pointer; font-size:1rem;">
                                 +
                             </button>
                         </div>
@@ -156,15 +150,14 @@
             {
                 <a href="/Account/Login"
                        style="display:block; text-align:center; padding:15px;
-                    background:var(--black); color:white;
-                    text-decoration:none; font-size:0.68rem;
-                    text-transform:uppercase; letter-spacing:3px;
+                    background:var(--black); color:white; text-decoration:none;
+                    font-size:0.68rem; text-transform:uppercase; letter-spacing:3px;
                     font-family:'Inter',sans-serif;">
                     Login to Purchase
                 </a>
             }
 
-            <!-- Accordion -->
+            <!-- Accordion details -->
             <div style="margin-top:2rem; border-top:1px solid var(--grey-mid);">
 
                 <div onclick="toggleDetail('details')"
@@ -181,12 +174,15 @@
                      style="display:none; padding:1rem 0;
                     border-bottom:1px solid var(--grey-mid);
                     font-size:0.82rem; line-height:2; color:#666;">
-                    <span style="text-transform:uppercase; letter-spacing:1px; font-size:0.68rem;">Brand:</span>
-                    @Model.Brand<br />
-                    <span style="text-transform:uppercase; letter-spacing:1px; font-size:0.68rem;">Category:</span>
-                    @Model.Category?.Name<br />
-                    <span style="text-transform:uppercase; letter-spacing:1px; font-size:0.68rem;">Status:</span>
-                    @(Model.IsAvailable ? "In Stock" : "Out of Stock")
+                    <span style="text-transform:uppercase; letter-spacing:1px; font-size:0.68rem;">
+                        Brand:
+                    </span> @Model.Brand<br />
+                    <span style="text-transform:uppercase; letter-spacing:1px; font-size:0.68rem;">
+                        Category:
+                    </span> @Model.Category?.Name<br />
+                    <span style="text-transform:uppercase; letter-spacing:1px; font-size:0.68rem;">
+                        Status:
+                    </span> @(Model.IsAvailable ? "In Stock" : "Out of Stock")
                 </div>
 
                 <div onclick="toggleDetail('shipping')"
@@ -215,64 +211,118 @@
 </div>
 
 <script>
-    // ─── ZOOM LENS ────────────────────────────────────────────────────
+    // ─── LENS ZOOM — only the area inside the lens square gets magnified ─
+    // How it works:
+    // 1. Canvas element overlays the image
+    // 2. On mouse move — draw only the small region under the lens onto canvas
+    // 3. That region is stretched to fill the lens box = magnification effect
+    // 4. Original image stays untouched underneath
+
     const container = document.getElementById('imgContainer');
-    const img       = document.getElementById('mainImg');
-    const lens      = document.getElementById('zoomLens');
-    const hint      = document.getElementById('zoomHint');
-    const ZOOM      = 2.5;
+    const mainImg   = document.getElementById('mainImg');
+    const lens      = document.getElementById('lens');
+
+    // zoom factor inside the lens
+    const ZOOM      = 1;
+
+    // lens size in pixels — must match CSS width/height of #lens
+    const LENS_W    = 140;
+    const LENS_H    = 140;
+
+    // create a canvas that sits on top of the image
+    // canvas lets us draw a magnified region pixel by pixel
+    const canvas    = document.createElement('canvas');
+    canvas.width    = LENS_W;
+    canvas.height   = LENS_H;
+    canvas.style.cssText = `
+        position:absolute;
+        width:${LENS_W}px;
+        height:${LENS_H}px;
+        pointer-events:none;
+        display:none;
+        transform:translate(-50%, -50%);
+        border:1px solid rgba(0,0,0,0.25);
+        z-index:10;
+    `;
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    // wait for image to fully load before we can draw from it
+    // if image already loaded this fires immediately
+    mainImg.addEventListener('load', () => {}, { once: true });
 
     container.addEventListener('mouseenter', () => {
-        lens.style.display = 'block';
-        hint.style.opacity = '0';
+        lens.style.display   = 'none'; // hide old lens div — canvas replaces it
+        canvas.style.display = 'block';
     });
 
     container.addEventListener('mouseleave', () => {
-        lens.style.display = 'none';
-        hint.style.opacity = '1';
-        img.style.transform = 'scale(1)';
+        canvas.style.display = 'none';
     });
 
     container.addEventListener('mousemove', (e) => {
-        // get cursor position relative to image container
-        const rect     = container.getBoundingClientRect();
-        const x        = e.clientX - rect.left;
-        const y        = e.clientY - rect.top;
+        const rect = container.getBoundingClientRect();
 
-        // move lens to cursor
-        lens.style.left = x + 'px';
-        lens.style.top  = y + 'px';
+        // cursor position inside container in pixels
+        const cursorX = e.clientX - rect.left;
+        const cursorY = e.clientY - rect.top;
 
-        // calculate zoom origin so cursor point stays in view
-        const xPct    = x / rect.width;
-        const yPct    = y / rect.height;
-        const originX = xPct * (1 - 1 / ZOOM) * 100;
-        const originY = yPct * (1 - 1 / ZOOM) * 100;
+        // move canvas to cursor position
+        canvas.style.left = cursorX + 'px';
+        canvas.style.top  = cursorY + 'px';
 
-        img.style.transformOrigin = `${originX}% ${originY}%`;
-        img.style.transform       = `scale(${ZOOM})`;
+        // how big is the source region we read from the image
+        // smaller sourceW/H = more zoom (we read fewer pixels and stretch them)
+        const sourceW = LENS_W / ZOOM;
+        const sourceH = LENS_H / ZOOM;
+
+        // source top-left corner — centered on cursor
+        // we read a sourceW x sourceH region from the image
+        const sourceX = (cursorX / rect.width)  * mainImg.naturalWidth  - sourceW / 2;
+        const sourceY = (cursorY / rect.height) * mainImg.naturalHeight - sourceH / 2;
+
+        // clear previous frame
+        ctx.clearRect(0, 0, LENS_W, LENS_H);
+
+        // draw the source region stretched to fill the entire lens canvas
+        // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+        // sx,sy = where to start reading from the source image
+        // sWidth,sHeight = how much of the source to read
+        // dx,dy = where to draw on canvas (0,0 = top left)
+        // dWidth,dHeight = how big to draw it on canvas = LENS size = magnification
+        ctx.drawImage(
+            mainImg,
+            sourceX, sourceY,   // source top-left
+            sourceW, sourceH,   // source region size
+            0, 0,               // destination top-left on canvas
+            LENS_W, LENS_H      // destination size = stretched = zoomed
+        );
     });
 
-    // ─── QUANTITY BUTTONS ─────────────────────────────────────────────
+    // ─── QUANTITY BUTTONS ────────────────────────────────────────────
     const qtyInput = document.getElementById('qtyInput');
+    const qtyMinus = document.getElementById('qtyMinus');
+    const qtyPlus  = document.getElementById('qtyPlus');
 
-    document.getElementById('qtyMinus').addEventListener('click', () => {
-        const v = parseInt(qtyInput.value);
-        if (v > 1) qtyInput.value = v - 1;
-    });
+    if (qtyMinus && qtyPlus && qtyInput) {
+        qtyMinus.addEventListener('click', () => {
+            const v = parseInt(qtyInput.value);
+            if (v > 1) qtyInput.value = v - 1;
+        });
+        qtyPlus.addEventListener('click', () => {
+            const v = parseInt(qtyInput.value);
+            if (v < 99) qtyInput.value = v + 1;
+        });
+    }
 
-    document.getElementById('qtyPlus').addEventListener('click', () => {
-        const v = parseInt(qtyInput.value);
-        if (v < 99) qtyInput.value = v + 1;
-    });
-
-    // ─── ADD TO CART FEEDBACK ─────────────────────────────────────────
+    // ─── ADD TO CART FEEDBACK ────────────────────────────────────────
     const cartForm = document.getElementById('cartForm');
     const addBtn   = document.getElementById('addToCartBtn');
 
     if (cartForm && addBtn) {
         cartForm.addEventListener('submit', () => {
-            addBtn.innerHTML      = '<i class="bi bi-check me-2"></i> Added!';
+            addBtn.innerHTML        = '<i class="bi bi-check me-2"></i> Added!';
             addBtn.style.background = '#2d2d2d';
         });
     }
@@ -281,9 +331,8 @@
     function toggleDetail(id) {
         const panel = document.getElementById(id);
         const icon  = document.getElementById('icon-' + id);
-        const open  = panel.style.display !== 'none';
-
-        panel.style.display = open ? 'none'  : 'block';
-        icon.className      = open ? 'bi bi-plus' : 'bi bi-dash';
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none'       : 'block';
+        icon.className      = isOpen ? 'bi bi-plus'  : 'bi bi-dash';
     }
 </script>
