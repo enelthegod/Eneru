@@ -4,52 +4,99 @@
     ViewData["Title"] = "My Orders";
 }
 
-<div class="container" style="max-width:750px;">
-    <h4 class="fw-bold text-uppercase mb-4" style="letter-spacing:1px;">My Orders</h4>
+<div style="padding:2rem 0; border-bottom:1px solid var(--grey-mid);">
+    <div class="container">
+        <h1 style="font-family:'Cormorant Garamond',serif; font-size:2.2rem;
+            font-weight:300; letter-spacing:4px; text-transform:uppercase;">
+            My Orders
+        </h1>
+    </div>
+</div>
+
+<div class="container" style="padding:3rem 1rem; max-width:900px;">
 
     @if (!Model.Any())
     {
-        <div class="text-center py-5">
-            <i class="bi bi-clock-history" style="font-size:3rem; color:#ccc;"></i>
-            <p class="text-muted mt-3">No orders yet.</p>
-            <a href="/Products" class="btn btn-dark">Start Shopping</a>
+        <div style="text-align:center; padding:5rem 0;">
+            <i class="bi bi-clock-history"
+               style="font-size:3rem; color:var(--grey-mid);
+            display:block; margin-bottom:1.5rem;"></i>
+            <p style="font-size:0.7rem; text-transform:uppercase;
+                letter-spacing:3px; color:var(--grey-text); margin-bottom:2rem;">
+                No orders yet
+            </p>
+            <a href="/Products" class="btn-eneru">Start Shopping</a>
         </div>
     }
     else
     {
         @foreach (var order in Model)
         {
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div>
-                            <p class="fw-bold mb-0">Order #@order.Id</p>
-                            <p class="text-muted mb-0" style="font-size:0.85rem;">
-                                @order.CreatedAt.ToString("MMMM dd, yyyy")
-                            </p>
-                        </div>
-                        <div class="text-end">
-                            <span class="badge bg-dark text-uppercase"
-                                  style="letter-spacing:1px; font-size:0.7rem;">
-                                @order.Status
-                            </span>
-                            <p class="fw-bold mb-0 mt-1">
-                                $@order.TotalPrice.ToString("0.00")
-                            </p>
-                        </div>
-                    </div>
+            <div style="border:1px solid var(--grey-mid); margin-bottom:1.5rem;">
 
+                <!-- Order header -->
+                <div style="display:flex; justify-content:space-between;
+                    align-items:center; padding:1.2rem 1.5rem;
+                    background:var(--grey-light);
+                    border-bottom:1px solid var(--grey-mid);">
+                    <div>
+                        <span style="font-size:0.68rem; text-transform:uppercase;
+                            letter-spacing:2px;">
+                            Order #@order.Id
+                        </span>
+                        <span style="font-size:0.68rem; color:var(--grey-text);
+                            margin-left:1rem;">
+                            @order.CreatedAt.ToString("MMMM dd, yyyy")
+                        </span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:1.5rem;">
+                        <!-- Status badge -->
+                        <span style="font-size:0.62rem; text-transform:uppercase;
+                            letter-spacing:2px; padding:4px 10px;
+                            border:1px solid var(--black);">
+                            @order.Status
+                        </span>
+                        <span style="font-size:0.9rem; font-weight:400;">
+                            $@order.TotalPrice.ToString("0.00")
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Order items -->
+                <div style="padding:1rem 1.5rem;">
                     @foreach (var item in order.OrderItems)
                     {
-                        <div class="d-flex justify-content-between text-muted border-top pt-2 mt-2"
-                             style="font-size:0.85rem;">
-                            <span>@item.Product!.Name × @item.Quantity</span>
-                            <span>
-                                $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
-                            </span>
+                        <div class="d-flex align-items-center gap-3 py-2"
+                             style="border-bottom:1px solid var(--grey-mid);">
+                            <img src="@item.Product!.ImageUrl"
+                                 alt="@item.Product.Name"
+                                 style="width:50px; height:62px;
+                            object-fit:cover;
+                            background:var(--grey-light);" />
+                            <div class="flex-grow-1">
+                                <p style="font-size:0.62rem; text-transform:uppercase;
+                                    letter-spacing:2px; color:var(--grey-text);
+                                    margin-bottom:2px;">
+                                    @item.Product.Brand
+                                </p>
+                                <p style="font-family:'Cormorant Garamond',serif;
+                                    font-size:0.95rem; margin:0;">
+                                    @item.Product.Name
+                                </p>
+                            </div>
+                            <div style="text-align:right;">
+                                <p style="font-size:0.75rem; color:var(--grey-text);
+                                    margin-bottom:2px;">
+                                    Qty: @item.Quantity
+                                </p>
+                                <p style="font-size:0.82rem; margin:0;">
+                                    $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
+                                </p>
+                            </div>
                         </div>
                     }
                 </div>
+
             </div>
         }
     }

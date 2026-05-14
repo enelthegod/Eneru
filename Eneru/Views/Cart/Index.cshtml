@@ -1,68 +1,219 @@
 ﻿@model List<Eneru.Models.CartItem>
 
 @{
-    ViewData["Title"] = "Your Cart";
+    ViewData["Title"] = "Cart";
 }
 
-<div class="container" style="max-width:800px;">
-    <h4 class="fw-bold mb-4 text-uppercase" style="letter-spacing:1px;">Your Cart</h4>
+<div style="padding:2rem 0; border-bottom:1px solid var(--grey-mid);">
+    <div class="container">
+        <h1 style="font-family:'Cormorant Garamond',serif; font-size:2.2rem;
+            font-weight:300; letter-spacing:4px; text-transform:uppercase;">
+            Your Cart
+        </h1>
+    </div>
+</div>
+
+<div class="container" style="padding:3rem 1rem;">
 
     @if (!Model.Any())
     {
-        <div class="text-center py-5">
-            <i class="bi bi-bag" style="font-size:3rem; color:#ccc;"></i>
-            <p class="text-muted mt-3">Your cart is empty.</p>
-            <a href="/Products" class="btn btn-dark">Continue Shopping</a>
+        <!-- Empty cart state -->
+        <div style="text-align:center; padding:5rem 0;">
+            <i class="bi bi-bag" style="font-size:3rem; color:var(--grey-mid);
+            display:block; margin-bottom:1.5rem;"></i>
+            <p style="font-size:0.7rem; text-transform:uppercase; letter-spacing:3px;
+                color:var(--grey-text); margin-bottom:2rem;">
+                Your cart is empty
+            </p>
+            <a href="/Products" class="btn-eneru">Continue Shopping</a>
         </div>
     }
     else
     {
-        @foreach (var item in Model)
-        {
-            <div class="d-flex align-items-center gap-3 py-3 border-bottom">
-                <img src="@item.Product!.ImageUrl"
-                     alt="@item.Product.Name"
-                     style="width:90px; height:90px; object-fit:cover; background:#f0f0f0;" />
+        <div class="row g-5">
 
-                <div class="flex-grow-1">
-                    <p class="text-muted mb-0" style="font-size:0.8rem;">@item.Product.Brand</p>
-                    <p class="fw-bold mb-0">@item.Product.Name</p>
-                    <p class="mb-0">$@item.Product.Price.ToString("0.00")</p>
+            <!-- LEFT — Cart items list -->
+            <div class="col-lg-8">
+
+                <!-- Column headers -->
+                <div class="row pb-2 mb-3"
+                     style="border-bottom:1px solid var(--grey-mid);
+                    font-size:0.65rem; text-transform:uppercase;
+                    letter-spacing:2px; color:var(--grey-text);">
+                    <div class="col-6">Product</div>
+                    <div class="col-2 text-center">Price</div>
+                    <div class="col-2 text-center">Qty</div>
+                    <div class="col-2 text-end">Total</div>
                 </div>
 
-                <form method="post" action="/Cart/UpdateQuantity"
-                      class="d-flex align-items-center gap-2">
-                    <input type="hidden" name="cartItemId" value="@item.Id" />
-                    <input type="number" name="quantity" value="@item.Quantity"
-                           min="1" max="99"
-                           class="form-control form-control-sm"
-                           style="width:65px;" />
-                    <button type="submit" class="btn btn-outline-dark btn-sm">Update</button>
-                </form>
+                @foreach (var item in Model)
+                {
+                    <!-- Single cart item row -->
+                    <div class="row align-items-center py-4"
+                         style="border-bottom:1px solid var(--grey-mid);">
 
-                <p class="fw-bold mb-0" style="min-width:80px; text-align:right;">
-                    $@((item.Product.Price * item.Quantity).ToString("0.00"))
-                </p>
+                        <!-- Product image + name -->
+                        <div class="col-6 d-flex gap-3 align-items-center">
+                            <img src="@item.Product!.ImageUrl"
+                                 alt="@item.Product.Name"
+                                 style="width:80px; height:100px;
+                            object-fit:cover;
+                            background:var(--grey-light);" />
+                            <div>
+                                <p style="font-size:0.62rem; text-transform:uppercase;
+                                    letter-spacing:2px; color:var(--grey-text);
+                                    margin-bottom:4px;">
+                                    @item.Product.Brand
+                                </p>
+                                <p style="font-family:'Cormorant Garamond',serif;
+                                    font-size:1.1rem; margin-bottom:0;">
+                                    @item.Product.Name
+                                </p>
+                            </div>
+                        </div>
 
-                <form method="post" action="/Cart/Remove">
-                    <input type="hidden" name="cartItemId" value="@item.Id" />
-                    <button type="submit" class="btn btn-link text-danger p-0">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </form>
+                        <!-- Unit price -->
+                        <div class="col-2 text-center"
+                             style="font-size:0.85rem;">
+                            $@item.Product.Price.ToString("0.00")
+                        </div>
+
+                        <!-- Quantity control -->
+                        <div class="col-2 text-center">
+                            <form method="post" action="/Cart/UpdateQuantity"
+                                  class="d-flex align-items-center justify-content-center">
+                                <input type="hidden" name="cartItemId" value="@item.Id" />
+                                <div style="display:inline-flex; align-items:center;
+                                    border:1px solid var(--grey-mid);">
+
+                                    <!-- minus button submits form with qty-1 -->
+                                    <button type="submit" name="quantity"
+                                            value="@(item.Quantity - 1)"
+                                            style="width:28px; height:28px; background:none;
+                                        border:none; cursor:pointer; font-size:0.9rem;">
+                                        −
+                                    </button>
+
+                                    <span style="width:28px; text-align:center;
+                                        font-size:0.8rem; border-left:1px solid var(--grey-mid);
+                                        border-right:1px solid var(--grey-mid);
+                                        line-height:28px;">
+                                        @item.Quantity
+                                    </span>
+
+                                    <!-- plus button submits form with qty+1 -->
+                                    <button type="submit" name="quantity"
+                                            value="@(item.Quantity + 1)"
+                                            style="width:28px; height:28px; background:none;
+                                        border:none; cursor:pointer; font-size:0.9rem;">
+                                        +
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Line total + remove -->
+                        <div class="col-2 text-end">
+                            <p style="font-size:0.85rem; margin-bottom:8px;">
+                                $@((item.Product.Price * item.Quantity).ToString("0.00"))
+                            </p>
+                            <form method="post" action="/Cart/Remove">
+                                <input type="hidden" name="cartItemId" value="@item.Id" />
+                                <button type="submit"
+                                        style="background:none; border:none; cursor:pointer;
+                                    font-size:0.62rem; text-transform:uppercase;
+                                    letter-spacing:1px; color:var(--grey-text);
+                                    text-decoration:underline; padding:0;">
+                                    Remove
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+
+                <!-- Back to shopping -->
+                <div style="padding-top:1.5rem;">
+                    <a href="/Products"
+                           style="font-size:0.68rem; text-transform:uppercase;
+                        letter-spacing:2px; color:var(--grey-text);
+                        text-decoration:none;">
+                        <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+                    </a>
+                </div>
             </div>
-        }
 
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <a href="/Products" class="text-muted text-decoration-none">
-                <i class="bi bi-arrow-left"></i> Continue Shopping
-            </a>
-            <div class="text-end">
-                <h5 class="fw-bold">Total: $@ViewBag.Total.ToString("0.00")</h5>
-                <a href="/Orders/Checkout" class="btn btn-dark px-5">
-                    Checkout <i class="bi bi-arrow-right"></i>
-                </a>
+            <!-- RIGHT — Order summary -->
+            <div class="col-lg-4">
+                <div style="background:var(--grey-light); padding:2rem;">
+
+                    <h5 style="font-family:'Cormorant Garamond',serif;
+                        font-size:1.4rem; font-weight:400;
+                        letter-spacing:2px; margin-bottom:1.5rem;
+                        text-transform:uppercase;">
+                        Summary
+                    </h5>
+
+                    <!-- Subtotal row -->
+                    <div style="display:flex; justify-content:space-between;
+                        font-size:0.78rem; margin-bottom:0.75rem;">
+                        <span style="color:var(--grey-text); text-transform:uppercase;
+                            letter-spacing:1px;">
+                            Subtotal
+                        </span>
+                        <span>$@ViewBag.Total.ToString("0.00")</span>
+                    </div>
+
+                    <!-- Shipping row -->
+                    <div style="display:flex; justify-content:space-between;
+                        font-size:0.78rem; margin-bottom:1.5rem;
+                        padding-bottom:1.5rem;
+                        border-bottom:1px solid var(--grey-mid);">
+                        <span style="color:var(--grey-text); text-transform:uppercase;
+                            letter-spacing:1px;">
+                            Shipping
+                        </span>
+                        <span style="color:green; font-size:0.72rem;">
+                            @(ViewBag.Total >= 150 ? "Free" : "$15.00")
+                        </span>
+                    </div>
+
+                    <!-- Total row -->
+                    <div style="display:flex; justify-content:space-between;
+                        margin-bottom:1.5rem;">
+                        <span style="font-size:0.72rem; text-transform:uppercase;
+                            letter-spacing:2px;">
+                            Total
+                        </span>
+                        <span style="font-size:1.1rem; font-weight:400;">
+                            $@((ViewBag.Total >= 150
+                                                            ? ViewBag.Total
+                                                            : ViewBag.Total + 15).ToString("0.00"))
+                        </span>
+                    </div>
+
+                    <!-- Free shipping progress -->
+                    @if (ViewBag.Total < 150)
+                    {
+                        <p style="font-size:0.65rem; text-transform:uppercase;
+                            letter-spacing:1px; color:var(--grey-text);
+                            margin-bottom:0.5rem;">
+                            Add $@((150 - ViewBag.Total).ToString("0.00")) more for free shipping
+                        </p>
+                        <div style="background:var(--grey-mid); height:2px; margin-bottom:1.5rem;">
+                            <div style="background:var(--black); height:2px;
+                                width:@(Math.Min(100, (int)(ViewBag.Total / 150.0 * 100)))%;">
+                            </div>
+                        </div>
+                    }
+
+                    <a href="/Orders/Checkout" class="btn-eneru"
+                           style="display:block; text-align:center; padding:14px;">
+                        Proceed to Checkout
+                    </a>
+
+                </div>
             </div>
+
         </div>
     }
 </div>

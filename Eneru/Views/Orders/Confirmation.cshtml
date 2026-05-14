@@ -4,58 +4,79 @@
     ViewData["Title"] = "Order Confirmed";
 }
 
-<div class="container" style="max-width:600px;">
+<div class="container" style="padding:5rem 1rem; max-width:700px;">
 
-    <!-- Success header -->
-    <div class="text-center mb-5">
-        <div class="mb-3">
-            <i class="bi bi-check-circle"
-               style="font-size:3rem; color:#111;"></i>
+    <!-- Success icon and heading -->
+    <div style="text-align:center; margin-bottom:3rem;">
+        <div style="width:64px; height:64px; border:1px solid var(--black);
+            border-radius:50%; display:flex; align-items:center;
+            justify-content:center; margin:0 auto 1.5rem;">
+            <i class="bi bi-check" style="font-size:1.5rem;"></i>
         </div>
-        <h4 class="fw-bold text-uppercase mb-1" style="letter-spacing:2px;">
+        <p style="font-size:0.65rem; text-transform:uppercase; letter-spacing:4px;
+            color:var(--grey-text); margin-bottom:0.5rem;">
+            Thank you
+        </p>
+        <h1 style="font-family:'Cormorant Garamond',serif; font-size:2.5rem;
+            font-weight:300; letter-spacing:3px; margin-bottom:0.5rem;">
             Order Confirmed
-        </h4>
-        <p class="text-muted">
-            Order #@Model.Id ·
+        </h1>
+        <p style="font-size:0.75rem; color:var(--grey-text); letter-spacing:1px;">
+            Order #@Model.Id &nbsp;·&nbsp;
             @Model.CreatedAt.ToString("MMMM dd, yyyy")
         </p>
     </div>
 
     <!-- Order items -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-0">
-            @foreach (var item in Model.OrderItems)
-            {
-                <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
-                    <div>
-                        <p class="fw-bold mb-0">@item.Product!.Name</p>
-                        <p class="text-muted mb-0" style="font-size:0.85rem;">
-                            Qty: @item.Quantity
-                        </p>
-                    </div>
-                    <p class="fw-bold mb-0">
-                        $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
+    <div style="border:1px solid var(--grey-mid); margin-bottom:2rem;">
+        @foreach (var item in Model.OrderItems)
+        {
+            <div class="d-flex align-items-center gap-3 p-3"
+                 style="border-bottom:1px solid var(--grey-mid);">
+                <img src="@item.Product!.ImageUrl"
+                     alt="@item.Product.Name"
+                     style="width:60px; height:75px;
+                object-fit:cover;
+                background:var(--grey-light);" />
+                <div class="flex-grow-1">
+                    <p style="font-size:0.62rem; text-transform:uppercase;
+                        letter-spacing:2px; color:var(--grey-text); margin-bottom:2px;">
+                        @item.Product.Brand
+                    </p>
+                    <p style="font-family:'Cormorant Garamond',serif;
+                        font-size:1rem; margin-bottom:0;">
+                        @item.Product.Name
+                    </p>
+                    <p style="font-size:0.72rem; color:var(--grey-text); margin:0;">
+                        Qty: @item.Quantity
                     </p>
                 </div>
-            }
-            <div class="p-3 d-flex justify-content-between">
-                <span class="fw-bold text-uppercase"
-                      style="letter-spacing:1px;">Total</span>
-                <span class="fw-bold fs-5">
-                    $@Model.TotalPrice.ToString("0.00")
-                </span>
+                <p style="font-size:0.85rem; margin:0;">
+                    $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
+                </p>
             </div>
+        }
+
+        <!-- Total row -->
+        <div style="display:flex; justify-content:space-between;
+            padding:1rem 1rem; background:var(--grey-light);">
+            <span style="font-size:0.68rem; text-transform:uppercase; letter-spacing:2px;">
+                Total Paid
+            </span>
+            <span style="font-size:1rem; font-weight:400;">
+                $@Model.TotalPrice.ToString("0.00")
+            </span>
         </div>
     </div>
 
+    <!-- Action buttons -->
     <div class="d-flex gap-3 justify-content-center">
-        <a href="/Orders/MyOrders" class="btn btn-dark"
-               style="text-transform:uppercase; letter-spacing:1px;">
-            My Orders
+        <a href="/Orders/MyOrders" class="btn-eneru">
+            View My Orders
         </a>
-        <a href="/Products" class="btn btn-outline-dark"
-               style="text-transform:uppercase; letter-spacing:1px;">
+        <a href="/Products" class="btn-eneru-dark-outline">
             Continue Shopping
         </a>
     </div>
+
 </div>
