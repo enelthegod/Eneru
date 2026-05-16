@@ -59,7 +59,7 @@ Full-stack fashion store built with ASP.NET Core MVC. Browse products, manage a 
 ### Run locally
 
 ```bash
-git clone https://github.com/yourusername/Eneru.git
+git clone https://github.com/enelthegod/Eneru.git
 cd Eneru/Eneru
 dotnet ef database update
 dotnet run
@@ -96,21 +96,22 @@ Eneru/
 │   └── ImageUploadService.cs    — file upload to wwwroot/uploads
 └── wwwroot/
 └── uploads/                 — uploaded product images
+---
 
 # Screenshots
 
 ##  Home
 
 <p align="center">
-  <img src="./screenshots/Home1.png" width="900"/>
+  <img src="./Screenshots/Home1.png" width="900"/>
 </p>
 
 <p align="center">
-  <img src="./screenshots/Home2.png" width="900"/>
+  <img src="./Screenshots/Home2.png" width="900"/>
 </p>
 
 <p align="center">
-  <img src="./screenshots/Home3.png" width="900"/>
+  <img src="./Screenshots/Home3.png" width="900"/>
 </p>
 
 ---
@@ -118,7 +119,7 @@ Eneru/
 ##  Login
 
 <p align="center">
-  <img src="./screenshots/Login.png" width="900"/>
+  <img src="./Screenshots/Login.png" width="900"/>
 </p>
 
 ---
@@ -126,7 +127,7 @@ Eneru/
 ##  Register
 
 <p align="center">
-  <img src="./screenshots/Register.png" width="900"/>
+  <img src="./Screenshots/Register.png" width="900"/>
 </p>
 
 ---
@@ -134,19 +135,19 @@ Eneru/
 ##  Admin Panel
 
 <p align="center">
-  <img src="./screenshots/Admin1.png" width="900"/>
+  <img src="./Screenshots/Admin1.png" width="900"/>
 </p>
 
 <p align="center">
-  <img src="./screenshots/Admin2.png" width="900"/>
+  <img src="./Screenshots/Admin2.png" width="900"/>
 </p>
 
 <p align="center">
-  <img src="./screenshots/Admin3.png" width="900"/>
+  <img src="./Screenshots/Admin3.png" width="900"/>
 </p>
 
 <p align="center">
-  <img src="./screenshots/Admin4.png" width="900"/>
+  <img src="./Screenshots/Admin4.png" width="900"/>
 </p>
 
 ---
@@ -154,17 +155,17 @@ Eneru/
 ##  User Panel
 
 <p align="center">
-  <img src="./screenshots/User1.png" width="900"/>
+  <img src="./Screenshots/User1.png" width="900"/>
 </p>
 
 <p align="center">
-  <img src="./screenshots/User2.png" width="900"/>
+  <img src="./Screenshots/User2.png" width="900"/>
 </p>
 
 <p align="center">
-  <img src="./screenshots/User3.png" width="900"/>
+  <img src="./Screenshots/User3.png" width="900"/>
 </p>
 
 <p align="center">
-  <img src="./screenshots/User4.png" width="900"/>
+  <img src="./Screenshots/User4.png" width="900"/>
 </p>
