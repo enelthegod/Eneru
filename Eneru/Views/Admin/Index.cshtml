@@ -2,110 +2,128 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="container-fluid">
-    <div class="row">
+<div class="d-flex" style="min-height:100vh;">
 
-        <!-- Sidebar -->
-        <div class="col-md-2 min-vh-100 py-4"
-             style="background:#111; color:white;">
-            <p class="text-uppercase fw-bold mb-4 px-3"
-                   style="letter-spacing:2px; font-size:0.8rem; color:#aaa;">
-                Admin Panel
-            </p>
-            <ul class="list-unstyled px-3">
-                <li class="mb-2">
-                    <a href="/Admin"
-                           class="text-white text-decoration-none d-flex align-items-center gap-2">
-                        <i class="bi bi-grid"></i> Dashboard
-                    </a>
-                </li>
-                <li class="mb-2">
+    <!-- Sidebar -->
+    <div style="width:220px; min-width:220px; background:var(--black);
+        padding:2rem 0; position:sticky; top:0; height:100vh;">
+
+        <p style="font-size:0.62rem; text-transform:uppercase; letter-spacing:3px;
+            color:#555; padding:0 1.5rem; margin-bottom:2rem;">
+            Admin Panel
+        </p>
+
+        <nav style="display:flex; flex-direction:column;">
+            <a href="/Admin"
+                   style="padding:0.75rem 1.5rem; font-size:0.68rem; text-transform:uppercase;
+                letter-spacing:2px; color:white; text-decoration:none;
+                background:rgba(255,255,255,0.08);
+                border-left:2px solid white;">
+                <i class="bi bi-grid me-2"></i> Dashboard
+            </a>
+            <a href="/Admin/Products"
+                   style="padding:0.75rem 1.5rem; font-size:0.68rem; text-transform:uppercase;
+                letter-spacing:2px; color:#888; text-decoration:none;
+                transition:color 0.2s; border-left:2px solid transparent;">
+                <i class="bi bi-box me-2"></i> Products
+            </a>
+            <a href="/Admin/Orders"
+                   style="padding:0.75rem 1.5rem; font-size:0.68rem; text-transform:uppercase;
+                letter-spacing:2px; color:#888; text-decoration:none;
+                transition:color 0.2s; border-left:2px solid transparent;">
+                <i class="bi bi-receipt me-2"></i> Orders
+            </a>
+            <div style="margin-top:auto; padding:1.5rem;">
+                <form method="post" action="/Account/Logout" style="margin-top:2rem;">
+                    <button type="submit"
+                            style="background:none; border:1px solid #333;
+                        color:#888; padding:8px 16px; cursor:pointer;
+                        font-size:0.62rem; text-transform:uppercase;
+                        letter-spacing:2px; width:100%;
+                        font-family:'Inter',sans-serif; transition:all 0.2s;">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main content -->
+    <div style="flex:1; padding:3rem;">
+
+        <h1 style="font-family:'Cormorant Garamond',serif; font-size:2rem;
+            font-weight:300; letter-spacing:3px; text-transform:uppercase;
+            margin-bottom:2.5rem;">
+            Dashboard
+        </h1>
+
+        <!-- Stats cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div style="border:1px solid var(--grey-mid); padding:2rem;">
+                    <p style="font-size:0.62rem; text-transform:uppercase;
+                        letter-spacing:3px; color:var(--grey-text); margin-bottom:1rem;">
+                        Total Products
+                    </p>
+                    <h2 style="font-family:'Cormorant Garamond',serif;
+                        font-size:3rem; font-weight:300; margin-bottom:1rem;">
+                        @ViewBag.ProductCount
+                    </h2>
                     <a href="/Admin/Products"
-                           class="text-white text-decoration-none d-flex align-items-center gap-2">
-                        <i class="bi bi-box"></i> Products
+                           style="font-size:0.65rem; text-transform:uppercase;
+                        letter-spacing:2px; color:var(--black);
+                        text-decoration:none; border-bottom:1px solid var(--black);">
+                        Manage →
                     </a>
-                </li>
-                <li class="mb-2">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div style="border:1px solid var(--grey-mid); padding:2rem;">
+                    <p style="font-size:0.62rem; text-transform:uppercase;
+                        letter-spacing:3px; color:var(--grey-text); margin-bottom:1rem;">
+                        Total Orders
+                    </p>
+                    <h2 style="font-family:'Cormorant Garamond',serif;
+                        font-size:3rem; font-weight:300; margin-bottom:1rem;">
+                        @ViewBag.OrderCount
+                    </h2>
                     <a href="/Admin/Orders"
-                           class="text-white text-decoration-none d-flex align-items-center gap-2">
-                        <i class="bi bi-receipt"></i> Orders
+                           style="font-size:0.65rem; text-transform:uppercase;
+                        letter-spacing:2px; color:var(--black);
+                        text-decoration:none; border-bottom:1px solid var(--black);">
+                        View →
                     </a>
-                </li>
-                <li class="mt-4">
-                    <form method="post" action="/Account/Logout">
-                        <button type="submit"
-                                class="btn btn-outline-light btn-sm w-100">
-                            Logout
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Main content -->
-        <div class="col-md-10 py-4 px-5">
-            <h4 class="fw-bold text-uppercase mb-4" style="letter-spacing:1px;">
-                Dashboard
-            </h4>
-
-            <!-- Summary cards -->
-            <div class="row g-4 mb-5">
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <p class="text-muted text-uppercase mb-1"
-                                   style="font-size:0.75rem; letter-spacing:1px;">
-                                Products
-                            </p>
-                            <h2 class="fw-bold mb-3">@ViewBag.ProductCount</h2>
-                            <a href="/Admin/Products"
-                                   class="text-dark text-decoration-none"
-                                   style="font-size:0.85rem;">
-                                Manage <i class="bi bi-arrow-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <p class="text-muted text-uppercase mb-1"
-                                   style="font-size:0.75rem; letter-spacing:1px;">
-                                Orders
-                            </p>
-                            <h2 class="fw-bold mb-3">@ViewBag.OrderCount</h2>
-                            <a href="/Admin/Orders"
-                                   class="text-dark text-decoration-none"
-                                   style="font-size:0.85rem;">
-                                Manage <i class="bi bi-arrow-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <p class="text-muted text-uppercase mb-1"
-                                   style="font-size:0.75rem; letter-spacing:1px;">
-                                Users
-                            </p>
-                            <h2 class="fw-bold mb-3">@ViewBag.UserCount</h2>
-                        </div>
-                    </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div style="border:1px solid var(--grey-mid); padding:2rem;">
+                    <p style="font-size:0.62rem; text-transform:uppercase;
+                        letter-spacing:3px; color:var(--grey-text); margin-bottom:1rem;">
+                        Registered Users
+                    </p>
+                    <h2 style="font-family:'Cormorant Garamond',serif;
+                        font-size:3rem; font-weight:300; margin-bottom:1rem;">
+                        @ViewBag.UserCount
+                    </h2>
+                </div>
+            </div>
+        </div>
 
-            <!-- Quick links -->
+        <!-- Quick actions -->
+        <div style="border-top:1px solid var(--grey-mid); padding-top:2rem;">
+            <p style="font-size:0.62rem; text-transform:uppercase;
+                letter-spacing:3px; color:var(--grey-text); margin-bottom:1.5rem;">
+                Quick Actions
+            </p>
             <div class="d-flex gap-3">
-                <a href="/Admin/CreateProduct" class="btn btn-dark"
-                       style="text-transform:uppercase; letter-spacing:1px;">
-                    <i class="bi bi-plus"></i> Add Product
+                <a href="/Admin/CreateProduct" class="btn-eneru">
+                    <i class="bi bi-plus me-2"></i> Add Product
                 </a>
-                <a href="/Admin/Orders" class="btn btn-outline-dark"
-                       style="text-transform:uppercase; letter-spacing:1px;">
-                    <i class="bi bi-receipt"></i> View Orders
+                <a href="/Admin/Orders" class="btn-eneru-dark-outline">
+                    <i class="bi bi-receipt me-2"></i> View Orders
                 </a>
             </div>
         </div>
+
     </div>
 </div>

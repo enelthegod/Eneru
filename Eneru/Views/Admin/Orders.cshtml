@@ -4,115 +4,154 @@
     ViewData["Title"] = "Manage Orders";
 }
 
-<div class="container-fluid">
-    <div class="row">
+<div class="d-flex" style="min-height:100vh;">
 
-        <!-- Sidebar -->
-        <div class="col-md-2 min-vh-100 py-4" style="background:#111; color:white;">
-            <p class="text-uppercase fw-bold mb-4 px-3"
-                   style="letter-spacing:2px; font-size:0.8rem; color:#aaa;">
-                Admin Panel
-            </p>
-            <ul class="list-unstyled px-3">
-                <li class="mb-2">
-                    <a href="/Admin"
-                           class="text-white text-decoration-none d-flex align-items-center gap-2">
-                        <i class="bi bi-grid"></i> Dashboard
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="/Admin/Products"
-                           class="text-white text-decoration-none d-flex align-items-center gap-2">
-                        <i class="bi bi-box"></i> Products
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="/Admin/Orders"
-                           class="fw-bold text-white text-decoration-none d-flex align-items-center gap-2">
-                        <i class="bi bi-receipt"></i> Orders
-                    </a>
-                </li>
-                <li class="mt-4">
-                    <form method="post" action="/Account/Logout">
-                        <button type="submit"
-                                class="btn btn-outline-light btn-sm w-100">
-                            Logout
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </div>
+    <!-- Sidebar -->
+    <div style="width:220px; min-width:220px; background:var(--black);
+        padding:2rem 0; position:sticky; top:0; height:100vh;">
+        <p style="font-size:0.62rem; text-transform:uppercase; letter-spacing:3px;
+            color:#555; padding:0 1.5rem; margin-bottom:2rem;">
+            Admin Panel
+        </p>
+        <nav style="display:flex; flex-direction:column;">
+            <a href="/Admin"
+                   style="padding:0.75rem 1.5rem; font-size:0.68rem; text-transform:uppercase;
+                letter-spacing:2px; color:#888; text-decoration:none;
+                border-left:2px solid transparent;">
+                <i class="bi bi-grid me-2"></i> Dashboard
+            </a>
+            <a href="/Admin/Products"
+                   style="padding:0.75rem 1.5rem; font-size:0.68rem; text-transform:uppercase;
+                letter-spacing:2px; color:#888; text-decoration:none;
+                border-left:2px solid transparent;">
+                <i class="bi bi-box me-2"></i> Products
+            </a>
+            <a href="/Admin/Orders"
+                   style="padding:0.75rem 1.5rem; font-size:0.68rem; text-transform:uppercase;
+                letter-spacing:2px; color:white; text-decoration:none;
+                background:rgba(255,255,255,0.08);
+                border-left:2px solid white;">
+                <i class="bi bi-receipt me-2"></i> Orders
+            </a>
+            <div style="padding:1.5rem; margin-top:2rem;">
+                <form method="post" action="/Account/Logout">
+                    <button type="submit"
+                            style="background:none; border:1px solid #333; color:#888;
+                        padding:8px 16px; cursor:pointer; font-size:0.62rem;
+                        text-transform:uppercase; letter-spacing:2px; width:100%;
+                        font-family:'Inter',sans-serif;">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </nav>
+    </div>
 
-        <!-- Main content -->
-        <div class="col-md-10 py-4 px-5">
-            <h4 class="fw-bold text-uppercase mb-4" style="letter-spacing:1px;">
-                Orders
-            </h4>
+    <!-- Main content -->
+    <div style="flex:1; padding:3rem;">
 
-            @if (!Model.Any())
+        <h1 style="font-family:'Cormorant Garamond',serif; font-size:2rem;
+            font-weight:300; letter-spacing:3px; text-transform:uppercase;
+            margin-bottom:2.5rem;">
+            Orders
+        </h1>
+
+        @if (!Model.Any())
+        {
+            <div style="text-align:center; padding:4rem 0;">
+                <i class="bi bi-receipt"
+                   style="font-size:3rem; color:var(--grey-mid);
+                display:block; margin-bottom:1rem;"></i>
+                <p style="font-size:0.7rem; text-transform:uppercase;
+                    letter-spacing:3px; color:var(--grey-text);">
+                    No orders yet
+                </p>
+            </div>
+        }
+        else
+        {
+            @foreach (var order in Model)
             {
-                <div class="text-center py-5">
-                    <i class="bi bi-receipt" style="font-size:3rem; color:#ccc;"></i>
-                    <p class="text-muted mt-3">No orders yet.</p>
-                </div>
-            }
-            else
-            {
-                @foreach (var order in Model)
-                {
-                    <div class="card border-0 shadow-sm mb-3">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div>
-                                    <p class="fw-bold mb-0">Order #@order.Id</p>
-                                    <p class="text-muted mb-0" style="font-size:0.85rem;">
-                                        @order.User?.Name ·
-                                        @order.CreatedAt.ToString("MMMM dd, yyyy")
+                <div style="border:1px solid var(--grey-mid); margin-bottom:1.5rem;">
+
+                    <!-- Order header -->
+                    <div style="display:flex; justify-content:space-between;
+                        align-items:center; padding:1rem 1.5rem;
+                        background:var(--grey-light);
+                        border-bottom:1px solid var(--grey-mid);">
+                        <div>
+                            <span style="font-size:0.72rem; text-transform:uppercase;
+                                letter-spacing:2px; margin-right:1.5rem;">
+                                Order #@order.Id
+                            </span>
+                            <span style="font-size:0.72rem; color:var(--grey-text);">
+                                @order.User?.Name &nbsp;·&nbsp;
+                                @order.CreatedAt.ToString("MMM dd, yyyy")
+                            </span>
+                        </div>
+
+                        <!-- Status update form -->
+                        <form method="post" action="/Admin/UpdateOrderStatus"
+                              class="d-flex align-items-center gap-2">
+                            <input type="hidden" name="orderId" value="@order.Id" />
+                            <select name="status"
+                                    style="border:1px solid var(--grey-mid); padding:6px 10px;
+                                font-size:0.68rem; text-transform:uppercase;
+                                letter-spacing:1px; outline:none; cursor:pointer;
+                                font-family:'Inter',sans-serif; background:white;">
+                                @foreach (var status in Enum.GetValues<Eneru.Models.OrderStatus>())
+                                {
+                                    <option value="@status"
+                                            selected="@(status == order.Status)">
+                                        @status
+                                    </option>
+                                }
+                            </select>
+                            <button type="submit" class="btn-eneru"
+                                    style="padding:6px 16px; font-size:0.62rem;">
+                                Update
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Order items -->
+                    <div style="padding:1rem 1.5rem;">
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <div class="d-flex align-items-center gap-3 py-2"
+                                 style="border-bottom:1px solid var(--grey-mid);">
+                                <img src="@item.Product?.ImageUrl"
+                                     alt="@item.Product?.Name"
+                                     style="width:40px; height:50px; object-fit:cover;
+                                background:var(--grey-light);" />
+                                <div class="flex-grow-1">
+                                    <p style="font-size:0.75rem; margin:0;">
+                                        @item.Product?.Name
+                                    </p>
+                                    <p style="font-size:0.65rem; color:var(--grey-text); margin:0;">
+                                        Qty: @item.Quantity
                                     </p>
                                 </div>
-
-                                <!-- Status update form -->
-                                <form method="post" action="/Admin/UpdateOrderStatus"
-                                      class="d-flex align-items-center gap-2">
-                                    <input type="hidden" name="orderId" value="@order.Id" />
-                                    <select name="status" class="form-select form-select-sm"
-                                            style="width:140px;">
-                                        @foreach (var status in Enum.GetValues<Eneru.Models.OrderStatus>())
-                                        {
-                                            <option value="@status"
-                                                    selected="@(status == order.Status)">
-                                                @status
-                                            </option>
-                                        }
-                                    </select>
-                                    <button type="submit"
-                                            class="btn btn-sm btn-dark"
-                                            style="text-transform:uppercase; letter-spacing:1px; font-size:0.75rem;">
-                                        Update
-                                    </button>
-                                </form>
-                            </div>
-
-                            @foreach (var item in order.OrderItems)
-                            {
-                                <div class="d-flex justify-content-between text-muted border-top pt-2 mt-2"
-                                     style="font-size:0.85rem;">
-                                    <span>@item.Product?.Name × @item.Quantity</span>
-                                    <span>
-                                        $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
-                                    </span>
-                                </div>
-                            }
-
-                            <div class="text-end mt-2">
-                                <span class="fw-bold">
-                                    Total: $@order.TotalPrice.ToString("0.00")
+                                <span style="font-size:0.78rem;">
+                                    $@((item.PriceAtPurchase * item.Quantity).ToString("0.00"))
                                 </span>
                             </div>
+                        }
+
+                        <div style="text-align:right; padding-top:0.75rem;">
+                            <span style="font-size:0.68rem; text-transform:uppercase;
+                                letter-spacing:2px; margin-right:1rem;
+                                color:var(--grey-text);">
+                                Total
+                            </span>
+                            <span style="font-size:1rem;">
+                                $@order.TotalPrice.ToString("0.00")
+                            </span>
                         </div>
                     </div>
-                }
+
+                </div>
             }
-        </div>
+        }
     </div>
 </div>

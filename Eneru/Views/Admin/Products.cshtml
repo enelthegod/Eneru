@@ -4,146 +4,159 @@
     ViewData["Title"] = "Manage Products";
 }
 
-<div class="container-fluid">
-    <div class="row">
+<div class="d-flex" style="min-height:100vh;">
 
-        <!-- Sidebar -->
-        <div class="col-md-2 min-vh-100 py-4" style="background:#111; color:white;">
-            <p class="text-uppercase fw-bold mb-4 px-3"
-                   style="letter-spacing:2px; font-size:0.8rem; color:#aaa;">
-                Admin Panel
-            </p>
-            <ul class="list-unstyled px-3">
-                <li class="mb-2">
-                    <a href="/Admin"
-                           class="text-white text-decoration-none d-flex align-items-center gap-2">
-                        <i class="bi bi-grid"></i> Dashboard
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="/Admin/Products"
-                           class="fw-bold text-white text-decoration-none d-flex align-items-center gap-2">
-                        <i class="bi bi-box"></i> Products
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="/Admin/Orders"
-                           class="text-white text-decoration-none d-flex align-items-center gap-2">
-                        <i class="bi bi-receipt"></i> Orders
-                    </a>
-                </li>
-                <li class="mt-4">
-                    <form method="post" action="/Account/Logout">
-                        <button type="submit"
-                                class="btn btn-outline-light btn-sm w-100">
-                            Logout
-                        </button>
-                    </form>
-                </li>
-            </ul>
+    <!-- Sidebar -->
+    <div style="width:220px; min-width:220px; background:var(--black);
+        padding:2rem 0; position:sticky; top:0; height:100vh;">
+        <p style="font-size:0.62rem; text-transform:uppercase; letter-spacing:3px;
+            color:#555; padding:0 1.5rem; margin-bottom:2rem;">
+            Admin Panel
+        </p>
+        <nav style="display:flex; flex-direction:column;">
+            <a href="/Admin"
+                   style="padding:0.75rem 1.5rem; font-size:0.68rem; text-transform:uppercase;
+                letter-spacing:2px; color:#888; text-decoration:none;
+                border-left:2px solid transparent;">
+                <i class="bi bi-grid me-2"></i> Dashboard
+            </a>
+            <a href="/Admin/Products"
+                   style="padding:0.75rem 1.5rem; font-size:0.68rem; text-transform:uppercase;
+                letter-spacing:2px; color:white; text-decoration:none;
+                background:rgba(255,255,255,0.08);
+                border-left:2px solid white;">
+                <i class="bi bi-box me-2"></i> Products
+            </a>
+            <a href="/Admin/Orders"
+                   style="padding:0.75rem 1.5rem; font-size:0.68rem; text-transform:uppercase;
+                letter-spacing:2px; color:#888; text-decoration:none;
+                border-left:2px solid transparent;">
+                <i class="bi bi-receipt me-2"></i> Orders
+            </a>
+            <div style="padding:1.5rem; margin-top:2rem;">
+                <form method="post" action="/Account/Logout">
+                    <button type="submit"
+                            style="background:none; border:1px solid #333; color:#888;
+                        padding:8px 16px; cursor:pointer; font-size:0.62rem;
+                        text-transform:uppercase; letter-spacing:2px; width:100%;
+                        font-family:'Inter',sans-serif;">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main content -->
+    <div style="flex:1; padding:3rem;">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 style="font-family:'Cormorant Garamond',serif; font-size:2rem;
+                font-weight:300; letter-spacing:3px; text-transform:uppercase;
+                margin:0;">
+                Products
+            </h1>
+            <a href="/Admin/CreateProduct" class="btn-eneru">
+                <i class="bi bi-plus me-1"></i> Add Product
+            </a>
         </div>
 
-        <!-- Main content -->
-        <div class="col-md-10 py-4 px-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold text-uppercase mb-0" style="letter-spacing:1px;">
-                    Products
-                </h4>
-                <a href="/Admin/CreateProduct" class="btn btn-dark"
-                       style="text-transform:uppercase; letter-spacing:1px;">
-                    <i class="bi bi-plus"></i> Add Product
-                </a>
+        <!-- Products table -->
+        <div style="border:1px solid var(--grey-mid);">
+
+            <!-- Header row -->
+            <div style="display:grid;
+                grid-template-columns:2fr 1fr 1fr 1fr 100px 140px;
+                padding:0.8rem 1.5rem;
+                background:var(--grey-light);
+                border-bottom:1px solid var(--grey-mid);
+                font-size:0.62rem; text-transform:uppercase;
+                letter-spacing:2px; color:var(--grey-text);">
+                <span>Product</span>
+                <span>Brand</span>
+                <span>Category</span>
+                <span>Price</span>
+                <span>Status</span>
+                <span>Actions</span>
             </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-0">
-                    <table class="table mb-0">
-                        <thead style="background:#f8f8f8;">
-                            <tr>
-                                <th class="py-3 px-4"
-                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
-                                    Product
-                                </th>
-                                <th class="py-3"
-                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
-                                    Brand
-                                </th>
-                                <th class="py-3"
-                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
-                                    Category
-                                </th>
-                                <th class="py-3"
-                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
-                                    Price
-                                </th>
-                                <th class="py-3"
-                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
-                                    Status
-                                </th>
-                                <th class="py-3"
-                                    style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var product in Model)
-                            {
-                                <tr class="border-top">
-                                    <td class="py-3 px-4">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <img src="@product.ImageUrl"
-                                                 alt="@product.Name"
-                                                 style="width:45px; height:45px; object-fit:cover; background:#f0f0f0;" />
-                                            <span class="fw-bold">@product.Name</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 text-muted">@product.Brand</td>
-                                    <td class="py-3 text-muted">@product.Category?.Name</td>
-                                    <td class="py-3 fw-bold">
-                                        $@product.Price.ToString("0.00")
-                                    </td>
-                                    <td class="py-3">
-                                        @if (product.IsAvailable)
-                                        {
-                                            <span class="badge"
-                                                  style="background:#e8f5e9; color:#2e7d32; font-size:0.75rem;">
-                                                Available
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge"
-                                                  style="background:#fce4ec; color:#c62828; font-size:0.75rem;">
-                                                Hidden
-                                            </span>
-                                        }
-                                    </td>
-                                    <td class="py-3">
-                                        <div class="d-flex gap-2">
-                                            <a href="/Admin/EditProduct/@product.Id"
-                                                   class="btn btn-sm btn-outline-dark"
-                                                   style="font-size:0.75rem;">
-                                                Edit
-                                            </a>
-                                            <form method="post" action="/Admin/DeleteProduct">
-                                                <input type="hidden" name="id"
-                                                       value="@product.Id" />
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-outline-danger"
-                                                        style="font-size:0.75rem;"
-                                                        onclick="return confirm('Delete @product.Name?')">
-                                                    Delete
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+            @foreach (var product in Model)
+            {
+                <!-- Product row -->
+                <div style="display:grid;
+                    grid-template-columns:2fr 1fr 1fr 1fr 100px 140px;
+                    padding:1rem 1.5rem;
+                    border-bottom:1px solid var(--grey-mid);
+                    align-items:center;
+                    gap:0.5rem;">
+
+                    <!-- Image + name -->
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <img src="@product.ImageUrl"
+                             alt="@product.Name"
+                             style="width:40px; height:50px;
+                        object-fit:cover;
+                        background:var(--grey-light);
+                        flex-shrink:0;" />
+                        <span style="font-size:0.82rem; line-height:1.3;">
+                            @product.Name
+                        </span>
+                    </div>
+
+                    <!-- Brand -->
+                    <span style="font-size:0.75rem; color:var(--grey-text);">
+                        @product.Brand
+                    </span>
+
+                    <!-- Category -->
+                    <span style="font-size:0.75rem; color:var(--grey-text);">
+                        @product.Category?.Name
+                    </span>
+
+                    <!-- Price -->
+                    <span style="font-size:0.82rem;">
+                        $@product.Price.ToString("0.00")
+                    </span>
+
+                    <!-- Status badge — fixed width so it never bleeds into actions -->
+                    <span style="display:inline-block;
+                        width:fit-content;
+                        font-size:0.6rem;
+                        text-transform:uppercase;
+                        letter-spacing:1px;
+                        padding:3px 10px;
+                        border:1px solid @(product.IsAvailable ? "#2e7d32" : "#c62828");
+                        color:@(product.IsAvailable ? "#2e7d32" : "#c62828");">
+                        @(product.IsAvailable ? "Live" : "Hidden")
+                    </span>
+
+                    <!-- Actions — flex so Edit and Delete sit side by side with gap -->
+                    <div style="display:flex; align-items:center; gap:1rem;">
+                        <a href="/Admin/EditProduct/@product.Id"
+                               style="font-size:0.65rem; text-transform:uppercase;
+                            letter-spacing:1px; color:var(--black);
+                            text-decoration:none;
+                            border-bottom:1px solid var(--black);
+                            white-space:nowrap;">
+                            Edit
+                        </a>
+                        <form method="post" action="/Admin/DeleteProduct" style="margin:0;">
+                            <input type="hidden" name="id" value="@product.Id" />
+                            <button type="submit"
+                                    onclick="return confirm('Delete @product.Name?')"
+                                    style="background:none; border:none; cursor:pointer;
+                                font-size:0.65rem; text-transform:uppercase;
+                                letter-spacing:1px; color:#c62828; padding:0;
+                                border-bottom:1px solid #c62828;
+                                font-family:'Inter',sans-serif;
+                                white-space:nowrap;">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+
                 </div>
-            </div>
+            }
         </div>
     </div>
 </div>
