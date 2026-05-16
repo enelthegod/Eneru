@@ -70,7 +70,7 @@ Open `https://localhost:7211`
 ---
 
 ## Project Structure
-
+```
 Eneru/
 ├── Controllers/
 │   ├── HomeController.cs        — home page
@@ -96,6 +96,7 @@ Eneru/
 │   └── ImageUploadService.cs    — file upload to wwwroot/uploads
 └── wwwroot/
 └── uploads/                 — uploaded product images
+```
 ---
 
 # Screenshots
