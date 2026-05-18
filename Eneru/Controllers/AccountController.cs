@@ -1,64 +1,47 @@
-﻿using Eneru.Data;
-using Eneru.Models;
-using Eneru.Services;
+﻿using Eneru.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eneru.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly AppDbContext _db;
+        private readonly IAccountService _account;
+        private readonly ICartService _cart;
 
-        public AccountController(AppDbContext db)
+        public AccountController(IAccountService account, ICartService cart)
         {
-            _db = db;
+            _account = account;
+            _cart = cart;
         }
 
-        // GET /Account/Register
+        [HttpGet]
         public IActionResult Register() => View();
 
-        // POST /Account/Register
         [HttpPost]
         public async Task<IActionResult> Register(string name, string email, string password)
         {
-            // Check if email is already taken
-            var exists = await _db.Users.AnyAsync(u => u.Email == email);
-            if (exists)
+            if (await _account.EmailExistsAsync(email))
             {
                 ViewBag.Error = "Email already registered.";
                 return View();
             }
 
-            var user = new User
-            {
-                Name = name,
-                Email = email,
-                PasswordHash = PasswordHasher.Hash(password),
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _db.Users.Add(user);
-            await _db.SaveChangesAsync();
+            var user = await _account.RegisterAsync(name, email, password);
 
             HttpContext.Session.SetInt32("UserId", user.Id);
             HttpContext.Session.SetString("UserName", user.Name);
             HttpContext.Session.SetString("UserEmail", user.Email);
-
-            // New users have empty cart so set counter to 0
             HttpContext.Session.SetInt32("CartCount", 0);
 
             return RedirectToAction("Index", "Products");
         }
 
-        // GET /Account/Login
+        [HttpGet]
         public IActionResult Login() => View();
 
-        // POST /Account/Login
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            // Check static admin credentials first — no database lookup needed
             if (email == AdminGuard.AdminEmail && password == AdminGuard.AdminPassword)
             {
                 HttpContext.Session.SetString("UserEmail", email);
@@ -68,9 +51,8 @@ namespace Eneru.Controllers
                 return RedirectToAction("Index", "Admin");
             }
 
-            // Regular user login
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (user == null || !PasswordHasher.Verify(password, user.PasswordHash))
+            var user = await _account.LoginAsync(email, password);
+            if (user == null)
             {
                 ViewBag.Error = "Invalid email or password.";
                 return View();
@@ -80,20 +62,15 @@ namespace Eneru.Controllers
             HttpContext.Session.SetString("UserName", user.Name);
             HttpContext.Session.SetString("UserEmail", user.Email);
 
-            // Load existing cart count from database on login
-            var cartCount = await _db.CartItems
-                .Where(c => c.UserId == user.Id)
-                .SumAsync(c => c.Quantity);
+            var cartCount = await _cart.GetCartCountAsync(user.Id);
             HttpContext.Session.SetInt32("CartCount", cartCount);
 
             return RedirectToAction("Index", "Products");
         }
 
-        // POST /Account/Logout
         [HttpPost]
         public IActionResult Logout()
         {
-            // Clear all session data including cart count
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }

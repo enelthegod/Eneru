@@ -1,123 +1,65 @@
-﻿using Eneru.Data;
-using Eneru.Models;
+﻿using Eneru.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eneru.Controllers
 {
     public class OrdersController : Controller
     {
-        private readonly AppDbContext _db;
+        private readonly IOrderService _orders;
+        private readonly ICartService _cart;
 
-        public OrdersController(AppDbContext db)
+        public OrdersController(IOrderService orders, ICartService cart)
         {
-            _db = db;
+            _orders = orders;
+            _cart = cart;
         }
 
-        // GET /Orders/Checkout
+        [HttpGet]
         public async Task<IActionResult> Checkout()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            // Load cart items with product details
-            var cartItems = await _db.CartItems
-                .Include(c => c.Product)
-                .Where(c => c.UserId == userId)
-                .ToListAsync();
-
-            // Redirect back to cart if empty
-            if (!cartItems.Any())
-                return RedirectToAction("Index", "Cart");
+            var cartItems = await _cart.GetCartAsync(userId.Value);
+            if (!cartItems.Any()) return RedirectToAction("Index", "Cart");
 
             ViewBag.Total = cartItems.Sum(c => c.Product!.Price * c.Quantity);
             return View(cartItems);
         }
 
-        // POST /Orders/PlaceOrder
         [HttpPost]
         public async Task<IActionResult> PlaceOrder()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            // Load cart items
-            var cartItems = await _db.CartItems
-                .Include(c => c.Product)
-                .Where(c => c.UserId == userId)
-                .ToListAsync();
+            var cartItems = await _cart.GetCartAsync(userId.Value);
+            if (!cartItems.Any()) return RedirectToAction("Index", "Cart");
 
-            if (!cartItems.Any())
-                return RedirectToAction("Index", "Cart");
+            var order = await _orders.PlaceOrderAsync(userId.Value, cartItems);
+            HttpContext.Session.SetInt32("CartCount", 0);
 
-            // Create the order
-            var order = new Order
-            {
-                UserId = userId.Value,
-                CreatedAt = DateTime.UtcNow,
-                Status = OrderStatus.Pending,
-                TotalPrice = cartItems.Sum(c => c.Product!.Price * c.Quantity)
-            };
-
-            _db.Orders.Add(order);
-            await _db.SaveChangesAsync(); // Save to get the generated order Id
-
-            // Create order items from cart — store price at time of purchase
-            foreach (var cartItem in cartItems)
-            {
-                _db.OrderItems.Add(new OrderItem
-                {
-                    OrderId = order.Id,
-                    ProductId = cartItem.ProductId,
-                    Quantity = cartItem.Quantity,
-                    PriceAtPurchase = cartItem.Product!.Price
-                });
-            }
-
-            // Clear the cart after placing order
-            _db.CartItems.RemoveRange(cartItems);
-
-            await _db.SaveChangesAsync();
-
-            // Redirect to confirmation page with the new order id
             return RedirectToAction("Confirmation", new { id = order.Id });
         }
 
-        // GET /Orders/Confirmation/5
+        [HttpGet]
         public async Task<IActionResult> Confirmation(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            var order = await _db.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Product)
-                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
-
-            if (order == null)
-                return NotFound();
-
+            var order = await _orders.GetOrderAsync(id, userId.Value);
+            if (order == null) return NotFound();
             return View(order);
         }
 
-        // GET /Orders/MyOrders
+        [HttpGet]
         public async Task<IActionResult> MyOrders()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            // Load all orders for this user, newest first
-            var orders = await _db.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Product)
-                .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.CreatedAt)
-                .ToListAsync();
-
+            var orders = await _orders.GetUserOrdersAsync(userId.Value);
             return View(orders);
         }
     }

@@ -8,34 +8,41 @@ namespace Eneru.Controllers
 {
     public class AdminController : Controller
     {
+        private readonly IProductService _products;
+        private readonly IOrderService _orders;
+        private readonly IAdminService _admin;
+        private readonly IImageUploadService _imageUpload;
         private readonly AppDbContext _db;
-        private readonly ImageUploadService _imageUpload;
 
-        // ASP.NET automatically injects both services here
-        public AdminController(AppDbContext db, ImageUploadService imageUpload)
+        public AdminController(
+            IProductService products,
+            IOrderService orders,
+            IAdminService admin,
+            IImageUploadService imageUpload,
+            AppDbContext db)
         {
-            _db = db;
+            _products = products;
+            _orders = orders;
+            _admin = admin;
             _imageUpload = imageUpload;
+            _db = db;
         }
 
-        // ─────────────────────────────────────────
-        // DASHBOARD — GET /Admin
-        // ─────────────────────────────────────────
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
                 return RedirectToAction("Index", "Home");
 
-            ViewBag.ProductCount = await _db.Products.CountAsync();
-            ViewBag.OrderCount = await _db.Orders.CountAsync();
-            ViewBag.UserCount = await _db.Users.CountAsync();
+            var (products, orders, users) = await _admin.GetDashboardStatsAsync();
+            ViewBag.ProductCount = products;
+            ViewBag.OrderCount = orders;
+            ViewBag.UserCount = users;
 
             return View();
         }
 
-        // ─────────────────────────────────────────
-        // PRODUCTS LIST — GET /Admin/Products
-        // ─────────────────────────────────────────
+        [HttpGet]
         public async Task<IActionResult> Products()
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
@@ -49,10 +56,7 @@ namespace Eneru.Controllers
             return View(products);
         }
 
-        // ─────────────────────────────────────────
-        // CREATE PRODUCT — GET /Admin/CreateProduct
-        // Shows the empty form
-        // ─────────────────────────────────────────
+        [HttpGet]
         public async Task<IActionResult> CreateProduct()
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
@@ -62,146 +66,85 @@ namespace Eneru.Controllers
             return View();
         }
 
-        // ─────────────────────────────────────────
-        // CREATE PRODUCT — POST /Admin/CreateProduct
-        // Handles form submission with optional image upload
-        // ─────────────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> CreateProduct(
             string name, string description, decimal price,
             string brand, int categoryId,
-            IFormFile? imageFile,   // uploaded file from the form
-            string? imageUrl)       // fallback: manual URL if no file uploaded
+            IFormFile? imageFile, string? imageUrl)
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
                 return RedirectToAction("Index", "Home");
 
-            // Try to save uploaded image first
-            // If no file uploaded — fall back to manual URL
-            // If no URL either — use placeholder
-            var savedImageUrl = await _imageUpload.SaveImageAsync(imageFile)
+            var savedUrl = await _imageUpload.SaveImageAsync(imageFile)
                 ?? imageUrl
                 ?? "/images/placeholder.jpg";
 
-            _db.Products.Add(new Product
-            {
-                Name = name,
-                Description = description,
-                Price = price,
-                Brand = brand,
-                CategoryId = categoryId,
-                ImageUrl = savedImageUrl,
-                IsAvailable = true,
-                CreatedAt = DateTime.UtcNow
-            });
+            await _products.CreateAsync(
+                name, description, price, brand, categoryId, savedUrl);
 
-            await _db.SaveChangesAsync();
             return RedirectToAction("Products");
         }
 
-        // ─────────────────────────────────────────
-        // EDIT PRODUCT — GET /Admin/EditProduct/5
-        // Loads existing product into form
-        // ─────────────────────────────────────────
+        [HttpGet]
         public async Task<IActionResult> EditProduct(int id)
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
                 return RedirectToAction("Index", "Home");
 
-            var product = await _db.Products.FindAsync(id);
+            var product = await _products.GetDetailAsync(id);
             if (product == null) return NotFound();
 
             ViewBag.Categories = await _db.Categories.ToListAsync();
             return View(product);
         }
 
-        // ─────────────────────────────────────────
-        // EDIT PRODUCT — POST /Admin/EditProduct
-        // Saves changes with optional new image
-        // ─────────────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> EditProduct(
             int id, string name, string description, decimal price,
             string brand, int categoryId,
-            IFormFile? imageFile,
-            string? imageUrl,
-            bool isAvailable)
+            IFormFile? imageFile, string? imageUrl, bool isAvailable)
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
                 return RedirectToAction("Index", "Home");
 
-            var product = await _db.Products.FindAsync(id);
-            if (product == null) return NotFound();
+            var newImageUrl = await _imageUpload.SaveImageAsync(imageFile)
+                ?? imageUrl
+                ?? "";
 
-            product.Name = name;
-            product.Description = description;
-            product.Price = price;
-            product.Brand = brand;
-            product.CategoryId = categoryId;
-            product.IsAvailable = isAvailable;
+            await _products.UpdateAsync(
+                id, name, description, price,
+                brand, categoryId, newImageUrl, isAvailable);
 
-            // Only update image if a new file was uploaded or new URL provided
-            var newImageUrl = await _imageUpload.SaveImageAsync(imageFile) ?? imageUrl;
-            if (!string.IsNullOrEmpty(newImageUrl))
-                product.ImageUrl = newImageUrl;
-
-            await _db.SaveChangesAsync();
             return RedirectToAction("Products");
         }
 
-        // ─────────────────────────────────────────
-        // DELETE PRODUCT — POST /Admin/DeleteProduct
-        // ─────────────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
                 return RedirectToAction("Index", "Home");
 
-            var product = await _db.Products.FindAsync(id);
-            if (product != null)
-            {
-                _db.Products.Remove(product);
-                await _db.SaveChangesAsync();
-            }
-
+            await _products.DeleteAsync(id);
             return RedirectToAction("Products");
         }
 
-        // ─────────────────────────────────────────
-        // ORDERS LIST — GET /Admin/Orders
-        // ─────────────────────────────────────────
+        [HttpGet]
         public async Task<IActionResult> Orders()
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
                 return RedirectToAction("Index", "Home");
 
-            var orders = await _db.Orders
-                .Include(o => o.User)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Product)
-                .OrderByDescending(o => o.CreatedAt)
-                .ToListAsync();
-
+            var orders = await _orders.GetAllOrdersAsync();
             return View(orders);
         }
 
-        // ─────────────────────────────────────────
-        // UPDATE ORDER STATUS — POST /Admin/UpdateOrderStatus
-        // ─────────────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, OrderStatus status)
         {
             if (!AdminGuard.IsAdmin(HttpContext.Session))
                 return RedirectToAction("Index", "Home");
 
-            var order = await _db.Orders.FindAsync(orderId);
-            if (order != null)
-            {
-                order.Status = status;
-                await _db.SaveChangesAsync();
-            }
-
+            await _orders.UpdateStatusAsync(orderId, status);
             return RedirectToAction("Orders");
         }
     }

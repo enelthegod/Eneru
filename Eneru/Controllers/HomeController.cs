@@ -1,30 +1,22 @@
-using Eneru.Data;
+using Eneru.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eneru.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly AppDbContext _db;
+        private readonly IProductService _products;
 
-        public HomeController(AppDbContext db)
+        public HomeController(IProductService products)
         {
-            _db = db;
+            _products = products;
         }
 
-        // GET /
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            // Load 6 newest available products for the featured section
-            var featuredProducts = await _db.Products
-                .Include(p => p.Category)
-                .Where(p => p.IsAvailable)
-                .OrderByDescending(p => p.CreatedAt)
-                .Take(6)
-                .ToListAsync();
-
-            return View(featuredProducts);
+            var featured = await _products.GetFeaturedAsync();
+            return View(featured);
         }
     }
 }

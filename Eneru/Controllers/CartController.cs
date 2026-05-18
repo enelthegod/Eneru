@@ -1,120 +1,65 @@
-﻿using Eneru.Data;
-using Eneru.Models;
+﻿using Eneru.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eneru.Controllers
 {
     public class CartController : Controller
     {
-        private readonly AppDbContext _db;
+        private readonly ICartService _cart;
 
-        public CartController(AppDbContext db)
+        public CartController(ICartService cart)
         {
-            _db = db;
+            _cart = cart;
         }
 
-        // Recalculate total cart item count and save it in session
-        private async Task RefreshCartCount(int userId)
-        {
-            var count = await _db.CartItems
-                .Where(c => c.UserId == userId)
-                .SumAsync(c => c.Quantity);
-
-            HttpContext.Session.SetInt32("CartCount", count);
-        }
-
-        // GET /Cart
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            var items = await _db.CartItems
-                .Include(c => c.Product)
-                .Where(c => c.UserId == userId)
-                .ToListAsync();
-
+            var items = await _cart.GetCartAsync(userId.Value);
             ViewBag.Total = items.Sum(c => c.Product!.Price * c.Quantity);
-
             return View(items);
         }
 
-        // POST /Cart/Add
         [HttpPost]
         public async Task<IActionResult> Add(int productId, int quantity = 1)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            var existing = await _db.CartItems
-                .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
-
-            if (existing != null)
-            {
-                existing.Quantity += quantity;
-            }
-            else
-            {
-                _db.CartItems.Add(new CartItem
-                {
-                    UserId = userId.Value,
-                    ProductId = productId,
-                    Quantity = quantity
-                });
-            }
-
-            await _db.SaveChangesAsync();
+            await _cart.AddToCartAsync(userId.Value, productId, quantity);
             await RefreshCartCount(userId.Value);
             return RedirectToAction("Index");
         }
 
-        // POST /Cart/Remove
         [HttpPost]
         public async Task<IActionResult> Remove(int cartItemId)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            var item = await _db.CartItems
-                .FirstOrDefaultAsync(c => c.Id == cartItemId && c.UserId == userId);
-
-            if (item != null)
-            {
-                _db.CartItems.Remove(item);
-                await _db.SaveChangesAsync();
-                await RefreshCartCount(userId.Value);
-            }
-
+            await _cart.RemoveFromCartAsync(cartItemId, userId.Value);
+            await RefreshCartCount(userId.Value);
             return RedirectToAction("Index");
         }
 
-        // POST /Cart/UpdateQuantity
         [HttpPost]
         public async Task<IActionResult> UpdateQuantity(int cartItemId, int quantity)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            var item = await _db.CartItems
-                .FirstOrDefaultAsync(c => c.Id == cartItemId && c.UserId == userId);
-
-            if (item != null)
-            {
-                if (quantity <= 0)
-                    _db.CartItems.Remove(item);
-                else
-                    item.Quantity = quantity;
-
-                await _db.SaveChangesAsync();
-                await RefreshCartCount(userId.Value);
-            }
-
+            await _cart.UpdateQuantityAsync(cartItemId, userId.Value, quantity);
+            await RefreshCartCount(userId.Value);
             return RedirectToAction("Index");
+        }
+
+        private async Task RefreshCartCount(int userId)
+        {
+            var count = await _cart.GetCartCountAsync(userId);
+            HttpContext.Session.SetInt32("CartCount", count);
         }
     }
 }
