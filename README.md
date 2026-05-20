@@ -170,3 +170,11 @@ Eneru/
 <p align="center">
   <img src="./Screenshots/User4.png" width="900"/>
 </p>
+
+---
+
+##  AI Assistant
+
+<p align="center">
+  <img src="./Screenshots/Assistant.png" width="900"/>
+</p>

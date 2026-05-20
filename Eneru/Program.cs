@@ -26,6 +26,8 @@ builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<IAssistantService, AssistantService>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
